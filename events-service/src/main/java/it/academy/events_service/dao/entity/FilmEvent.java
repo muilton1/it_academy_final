@@ -39,14 +39,14 @@ public class FilmEvent {
     private EEventType type;
     @Enumerated(EnumType.STRING)
     private EEventStatus status;
-    private int releaseYear;
+    private Integer releaseYear;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
     private UUID country;
     @JsonDeserialize(using = DurationDeserializer.class)
     @JsonSerialize(using = DurationSerializer.class)
 
-    private int duration;
+    private Integer duration;
 
     public FilmEvent() {
     }
@@ -123,13 +123,6 @@ public class FilmEvent {
         this.status = status;
     }
 
-    public int getReleaseYear() {
-        return releaseYear;
-    }
-
-    public void setReleaseYear(int releaseYear) {
-        this.releaseYear = releaseYear;
-    }
 
     public LocalDate getReleaseDate() {
         return releaseDate;
@@ -148,11 +141,19 @@ public class FilmEvent {
         this.country = country;
     }
 
-    public int getDuration() {
+    public void setReleaseYear(Integer releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+    public Integer getReleaseYear() {
+        return releaseYear;
     }
 }

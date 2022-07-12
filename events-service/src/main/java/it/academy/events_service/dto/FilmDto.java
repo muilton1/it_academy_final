@@ -13,15 +13,14 @@ import java.util.UUID;
 public class FilmDto {
 
     private String title;
-
     private String description;
     private LocalDateTime dtEvent;
     private LocalDateTime dtEndOfSale;
     private EEventStatus status;
-    private int releaseYear;
+    private Integer releaseYear;
     private LocalDate releaseDate;
     private UUID country;
-    private int duration;
+    private Integer duration;
 
     public FilmDto() {
     }
@@ -93,19 +92,19 @@ public class FilmDto {
         this.country = country;
     }
 
-    public int getReleaseYear() {
+    public Integer getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(int releaseYear) {
+    public void setReleaseYear(Integer releaseYear) {
         this.releaseYear = releaseYear;
     }
 
-    public int getDuration() {
+    public Integer getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
+    public void setDuration(Integer duration) {
         this.duration = duration;
     }
 }
