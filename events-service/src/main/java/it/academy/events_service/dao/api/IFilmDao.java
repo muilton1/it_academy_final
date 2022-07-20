@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 @Repository
-public interface IFilmDao extends JpaRepository<FilmEvent,Long> {
+public interface IFilmDao extends JpaRepository<FilmEvent,UUID> {
     FilmEvent findByUuid(UUID uuid);
 }

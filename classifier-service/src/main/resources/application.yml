@@ -4,5 +4,10 @@ spring:
     password: postgres
     url: jdbc:postgresql://localhost:5432/classifierservice?currentSchema=classifier
     driver-class-name: org.postgresql.Driver
+  jpa:
+    database: POSTGRESQL
+    show-sql: true
+    hibernate:
+      ddl-auto:update
 server:
   port: 8081

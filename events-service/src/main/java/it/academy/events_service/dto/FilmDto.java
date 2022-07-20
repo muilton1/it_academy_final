@@ -1,10 +1,16 @@
 package it.academy.events_service.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import it.academy.events_service.controller.utils.json.LocalDateTimeDeserializer;
+import it.academy.events_service.controller.utils.json.LocalDateTimeSerializer;
 import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dao.enums.EEventStatus;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,13 +20,18 @@ public class FilmDto {
 
     private String title;
     private String description;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEvent;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
     private EEventStatus status;
-    private Integer releaseYear;
+    private int releaseYear;
+    @JsonFormat(pattern = "dd MMMM yyyy")
     private LocalDate releaseDate;
     private UUID country;
-    private Integer duration;
+    private int duration;
 
     public FilmDto() {
     }
@@ -36,7 +47,7 @@ public class FilmDto {
         this.country = entity.getCountry();
         this.duration = entity.getDuration();
     }
-    @NotBlank(message = "Заполните название фильма!")
+    @NotNull(message = "Заполните название фильма!")
     public String getTitle() {
         return title;
     }
@@ -44,7 +55,7 @@ public class FilmDto {
     public void setTitle(String title) {
         this.title = title;
     }
-    @NotBlank(message = "Заполните описание фильма!")
+    @NotNull(message = "Заполните описание фильма!")
     public String getDescription() {
         return description;
     }
@@ -52,6 +63,7 @@ public class FilmDto {
     public void setDescription(String description) {
         this.description = description;
     }
+    @NotNull(message = "Заполните дату фильма!")
     public LocalDateTime getDtEvent() {
         return dtEvent;
     }
@@ -59,7 +71,7 @@ public class FilmDto {
     public void setDtEvent(LocalDateTime dtEvent) {
         this.dtEvent = dtEvent;
     }
-
+    @NotNull(message = "Заполните конец продажи билетов на фильм!")
     public LocalDateTime getDtEndOfSale() {
         return dtEndOfSale;
     }
@@ -75,7 +87,7 @@ public class FilmDto {
     public void setStatus(EEventStatus status) {
         this.status = status;
     }
-
+    @NotNull(message = "Заполните год выпуска фильма!")
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -91,20 +103,20 @@ public class FilmDto {
     public void setCountry(UUID country) {
         this.country = country;
     }
-
-    public Integer getReleaseYear() {
+    @NotNull(message = "Заполните год релиза фильма!")
+    public int getReleaseYear() {
         return releaseYear;
     }
 
-    public void setReleaseYear(Integer releaseYear) {
+    public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
-
-    public Integer getDuration() {
+    @NotNull(message = "Заполните длительность фильма!")
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 }

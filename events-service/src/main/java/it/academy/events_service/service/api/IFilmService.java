@@ -2,6 +2,7 @@ package it.academy.events_service.service.api;
 
 import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dto.FilmDto;
+import it.academy.events_service.dto.FilmDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 
 import javax.validation.Valid;
@@ -13,7 +14,7 @@ public interface IFilmService {
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 
-    FilmEvent update(FilmDto filmDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
+    FilmEvent update(FilmDtoUpdate filmDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate);
 
     FilmEvent getOne(UUID uuid);
 }

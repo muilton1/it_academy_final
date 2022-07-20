@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface IConcertCategoryDao extends JpaRepository<ConcertCategory,Long> {
+public interface IConcertCategoryDao extends JpaRepository<ConcertCategory,UUID> {
     ConcertCategory findByUuid(UUID uuid);
 }

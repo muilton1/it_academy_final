@@ -1,5 +1,9 @@
 package it.academy.events_service.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import it.academy.events_service.controller.utils.json.LocalDateTimeDeserializer;
+import it.academy.events_service.controller.utils.json.LocalDateTimeSerializer;
 import it.academy.events_service.dao.entity.ConcertEvent;
 import it.academy.events_service.dao.enums.EEventStatus;
 import org.springframework.validation.annotation.Validated;
@@ -12,9 +16,11 @@ import java.util.UUID;
 public class ConcertDto {
     private String title;
     private String description;
-
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEvent;
-
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
 
     private EEventStatus status;
@@ -32,7 +38,7 @@ public class ConcertDto {
         this.status = entity.getStatus();
         this.category= entity.getCategory();
     }
-    @NotBlank(message = "Заполните название концерта!")
+    @NotNull(message = "Заполните название концерта!")
     public String getTitle() {
         return title;
     }
@@ -40,7 +46,7 @@ public class ConcertDto {
     public void setTitle(String title) {
         this.title = title;
     }
-    @NotBlank(message = "Заполните описание концерта!")
+    @NotNull(message = "Заполните описание концерта!")
     public String getDescription() {
         return description;
     }
@@ -48,7 +54,7 @@ public class ConcertDto {
     public void setDescription(String description) {
         this.description = description;
     }
-
+    @NotNull(message = "Заполните дату концерта!")
     public LocalDateTime getDtEvent() {
         return dtEvent;
     }
@@ -56,7 +62,7 @@ public class ConcertDto {
     public void setDtEvent(LocalDateTime dtEvent) {
         this.dtEvent = dtEvent;
     }
-
+    @NotNull(message = "Заполните дату окончания продажи билетов на концерт!")
     public LocalDateTime getDtEndOfSale() {
         return dtEndOfSale;
     }

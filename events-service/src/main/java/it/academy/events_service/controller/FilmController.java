@@ -3,8 +3,10 @@ package it.academy.events_service.controller;
 
 import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dto.FilmDto;
+import it.academy.events_service.dto.FilmDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IFilmService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,11 +24,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/afisha/event/films")
 @Validated
 public class FilmController {
-
-    static {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
-
+    @Autowired
     private final IFilmService filmService;
 
     public FilmController(IFilmService filmService) {
@@ -34,13 +32,13 @@ public class FilmController {
     }
 
     @PostMapping()
-    public ResponseEntity<FilmEvent> create(@Valid @RequestBody FilmDto filmDto) {
-        return new ResponseEntity<>(this.filmService.create(filmDto), HttpStatus.CREATED);
+    public ResponseEntity<FilmDto> create(@Valid @RequestBody FilmDto filmDto) {
+        return new ResponseEntity<>(new FilmDto(this.filmService.create(filmDto)), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<PageContent<FilmEvent>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
-                                                       @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
+    public ResponseEntity<PageContent<FilmDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
+                                                     @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
         return new ResponseEntity<>((this.filmService.getAll(pageNo, pageSize)), HttpStatus.OK);
     }
 
@@ -50,9 +48,9 @@ public class FilmController {
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_create}")
-    public ResponseEntity<FilmEvent> update(@Valid @RequestBody FilmDto filmDto, @PathVariable UUID uuid, @PathVariable Long dt_create) {
+    public ResponseEntity<FilmDtoUpdate> update(@Valid @RequestBody FilmDtoUpdate filmDtoUpdate, @PathVariable UUID uuid, @PathVariable Long dt_create) {
         LocalDateTime lastKnowDtUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dt_create), ZoneId.systemDefault());
-        return new ResponseEntity<>(this.filmService.update(filmDto, uuid, lastKnowDtUpdate), HttpStatus.OK);
+        return new ResponseEntity<>(new FilmDtoUpdate(this.filmService.update(filmDtoUpdate, uuid, lastKnowDtUpdate)), HttpStatus.OK);
     }
 
 }

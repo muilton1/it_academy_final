@@ -2,6 +2,7 @@ package it.academy.events_service.service.api;
 
 import it.academy.events_service.dao.entity.ConcertEvent;
 import it.academy.events_service.dto.ConcertDto;
+import it.academy.events_service.dto.ConcertDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 
 import javax.validation.Valid;
@@ -13,7 +14,7 @@ public interface IConcertService {
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 
-    ConcertEvent update(ConcertDto concertDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
+    ConcertEvent update(ConcertDtoUpdate concertDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
 
     ConcertEvent getOne(UUID uuid);
 }

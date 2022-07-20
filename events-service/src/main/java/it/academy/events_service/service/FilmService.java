@@ -6,6 +6,7 @@ import it.academy.events_service.dao.api.IFilmDao;
 import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dao.enums.EEventType;
 import it.academy.events_service.dto.FilmDto;
+import it.academy.events_service.dto.FilmDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IFilmService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,35 +36,14 @@ public class FilmService implements IFilmService {
 
     @Override
     public FilmEvent create(@Valid FilmDto filmDto) {
-
-        FilmEvent filmEvent = new FilmEvent();
-
-        filmEvent.setUuid(UUID.randomUUID());
-        filmEvent.setDtCreate(LocalDateTime.now());
-        filmEvent.setDtUpdate(filmEvent.getDtCreate());
-        filmEvent.setTitle(filmDto.getTitle());
-        filmEvent.setDescription(filmDto.getDescription());
-        filmEvent.setDtEvent(filmDto.getDtEvent());
-        filmEvent.setDtEndOfSale(filmDto.getDtEndOfSale());
-        filmEvent.setType(EEventType.FILMS);
-        filmEvent.setStatus(filmDto.getStatus());
-        filmEvent.setReleaseDate(filmDto.getReleaseDate());
-        filmEvent.setReleaseYear(filmDto.getReleaseYear());
-
-        if (filmDto.getCountry() != null) {
-            filmEvent.setCountry(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/country/" + filmDto.getCountry(), UUID.class));
-        }
-
-        filmEvent.setDuration(filmDto.getDuration());
-
-        return this.filmDao.save(filmEvent);
+        return this.filmDao.save(mapCreate(filmDto));
     }
 
-
     @Override
-    public PageContent<FilmEvent> getAll(Integer pageNo, Integer pageSize) {
+    public PageContent<FilmDto> getAll(Integer pageNo, Integer pageSize) {
 
         PageRequest paging = PageRequest.of(pageNo, pageSize);
+
         Page<FilmEvent> page = this.filmDao.findAll(paging);
         return new PageContent(page.getNumber(),
                 page.getSize(),
@@ -79,21 +59,21 @@ public class FilmService implements IFilmService {
     public FilmEvent getOne(UUID uuid) {
 
         List<UUID> getUuid = filmDao.findAll().stream().map(FilmEvent::getUuid).collect(Collectors.toList());
+
         if (getUuid.contains(uuid)) {
             return this.filmDao.findByUuid(uuid);
+
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 
 
     @Override
-    public FilmEvent update(FilmDto filmDto, UUID uuid, LocalDateTime lastKnowDtUpdate) {
+    public FilmEvent update(FilmDtoUpdate filmDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate) {
 
-        List<FilmEvent> films = this.filmDao.findAll();
+        List<UUID> getUuid = filmDao.findAll().stream().map(FilmEvent::getUuid).collect(Collectors.toList());
 
-        for (FilmEvent film : films) {
-            if (!film.getUuid().equals(uuid)) {
-                throw new IllegalArgumentException("Введен некорректный UUID!");
-            }
+        if (!getUuid.contains(uuid)) {
+            throw new IllegalArgumentException("Введен неверный UUID!");
         }
 
         FilmEvent filmEvent = this.filmDao.findByUuid(uuid);
@@ -102,22 +82,67 @@ public class FilmService implements IFilmService {
             throw new IllegalArgumentException("Данные уже были кем-то изменены до вас!");
         }
 
+        return this.filmDao.save(mapUpdate(filmEvent, filmDtoUpdate));
+    }
+
+    public FilmEvent mapCreate(FilmDto filmDto) {
+
+        FilmEvent filmEvent = new FilmEvent();
+
+        filmEvent.setUuid(UUID.randomUUID());
+        filmEvent.setDtCreate(LocalDateTime.now());
+        filmEvent.setDtUpdate(filmEvent.getDtCreate());
         filmEvent.setTitle(filmDto.getTitle());
         filmEvent.setDescription(filmDto.getDescription());
         filmEvent.setDtEvent(filmDto.getDtEvent());
         filmEvent.setDtEndOfSale(filmDto.getDtEndOfSale());
+        filmEvent.setType(EEventType.FILMS);
         filmEvent.setStatus(filmDto.getStatus());
         filmEvent.setReleaseDate(filmDto.getReleaseDate());
         filmEvent.setReleaseYear(filmDto.getReleaseYear());
+        filmEvent.setDuration(filmDto.getDuration());
 
         if (filmDto.getCountry() != null) {
             filmEvent.setCountry(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/country/" + filmDto.getCountry(), UUID.class));
         }
+        return filmEvent;
+    }
 
-        filmEvent.setDuration(filmDto.getDuration());
+    public FilmEvent mapUpdate(FilmEvent filmEvent, FilmDtoUpdate filmDtoUpdate) {
 
-        this.filmDao.save(filmEvent);
+        if (filmDtoUpdate.getTitle() != null) {
+            filmEvent.setTitle(filmDtoUpdate.getTitle());
+        }
 
-        return this.filmDao.findByUuid(uuid);
+        if (filmDtoUpdate.getDescription() != null) {
+            filmEvent.setTitle(filmDtoUpdate.getDescription());
+        }
+
+        if (filmDtoUpdate.getDtEvent() != null) {
+            filmEvent.setDtEvent(filmDtoUpdate.getDtEvent());
+        }
+        if (filmDtoUpdate.getDtEndOfSale() != null) {
+            filmEvent.setDtEndOfSale(filmDtoUpdate.getDtEndOfSale());
+        }
+        if (filmDtoUpdate.getStatus() != null) {
+            filmEvent.setStatus(filmDtoUpdate.getStatus());
+        }
+        if (filmDtoUpdate.getReleaseDate() != null) {
+            filmEvent.setReleaseDate(filmDtoUpdate.getReleaseDate());
+        }
+
+        if (filmDtoUpdate.getReleaseYear() != 0) {
+            filmEvent.setReleaseYear(filmDtoUpdate.getReleaseYear());
+        }
+
+        if (filmDtoUpdate.getDuration() != 0) {
+            filmEvent.setDuration(filmDtoUpdate.getDuration());
+        }
+
+        if (filmDtoUpdate.getCountry() != null) {
+            filmEvent.setCountry(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/country/" + filmDtoUpdate.getCountry(), UUID.class));
+        }
+
+        return filmEvent;
     }
 }

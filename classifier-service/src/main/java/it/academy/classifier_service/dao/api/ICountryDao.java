@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface ICountryDao extends JpaRepository<Country, Long> {
+public interface ICountryDao extends JpaRepository<Country, UUID> {
     Country findByUuid(UUID uuid);
 }
