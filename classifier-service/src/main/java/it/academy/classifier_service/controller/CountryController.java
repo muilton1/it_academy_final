@@ -5,6 +5,7 @@ import it.academy.classifier_service.dao.entity.Country;
 import it.academy.classifier_service.dto.CountryDto;
 import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.ICountryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -19,10 +20,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/classifier/country")
 @Validated
 public class CountryController {
-    static {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
-
+    @Autowired
     private final ICountryService countryService;
 
     public CountryController(ICountryService countryService) {
@@ -30,12 +28,12 @@ public class CountryController {
     }
 
     @PostMapping()
-    public ResponseEntity<Country> create(@Valid @RequestBody CountryDto dto) {
-        return new ResponseEntity<>(this.countryService.create(dto), HttpStatus.CREATED);
+    public ResponseEntity<CountryDto> create(@Valid @RequestBody CountryDto dto) {
+        return new ResponseEntity<>(new CountryDto(this.countryService.create(dto)), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<PageContent<Country>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
+    public ResponseEntity<PageContent<CountryDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
                                                      @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
         return new ResponseEntity<>(this.countryService.getAll(pageNo, pageSize), HttpStatus.OK);
     }

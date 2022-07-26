@@ -2,8 +2,8 @@ package it.academy.classifier_service.dao.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import it.academy.classifier_service.controller.utils.LocalDateTimeDeserializer;
-import it.academy.classifier_service.controller.utils.LocalDateTimeSerializer;
+import it.academy.classifier_service.controller.utils.json.LocalDateTimeDeserializer;
+import it.academy.classifier_service.controller.utils.json.LocalDateTimeSerializer;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;

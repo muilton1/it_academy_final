@@ -13,6 +13,9 @@ public class PageContent<T> {
 
     List<T> content;
 
+    public PageContent() {
+    }
+
     public PageContent(int number, int size, int totalPages, int totalElements, boolean first, int numberOfElements, boolean last, List<T> content) {
         this.number = number;
         this.size = size;

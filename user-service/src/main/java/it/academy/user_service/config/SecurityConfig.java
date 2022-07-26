@@ -1,6 +1,7 @@
 package it.academy.user_service.config;
 
 import it.academy.user_service.controller.filter.JwtFilter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -47,9 +48,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers("/public/**").permitAll()
+                .antMatchers("/api/v1/users/role").permitAll()
+                .antMatchers("/api/v1/users/me").authenticated()
+                .antMatchers("/api/v1/users/registration").anonymous()
+                .antMatchers("/api/v1/users/login").anonymous()
+
                 // Our private endpoints
-                .anyRequest().authenticated();
+                .anyRequest().hasRole("ADMIN");
 
         // Add JWT token filter
         http.addFilterBefore(

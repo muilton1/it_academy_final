@@ -4,6 +4,7 @@ import it.academy.user_service.dao.entity.User;
 import it.academy.user_service.dto.PageContent;
 import it.academy.user_service.dto.UserDto;
 import it.academy.user_service.service.api.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,13 +19,10 @@ import java.util.TimeZone;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @Validated
 public class AdminController {
-    static {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
-
+    @Autowired
     private final IUserService userService;
 
     public AdminController(IUserService userService) {

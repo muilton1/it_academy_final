@@ -4,6 +4,7 @@ import it.academy.classifier_service.dao.entity.ConcertCategory;
 import it.academy.classifier_service.dto.ConcertCategoryDto;
 import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.IConcertCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,10 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/classifier/concert/category")
 @Validated
 public class ConcertCategoryController {
-    static {
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-    }
-
+    @Autowired
     private final IConcertCategoryService categoryService;
 
     public ConcertCategoryController(IConcertCategoryService categoryService) {
@@ -29,12 +27,12 @@ public class ConcertCategoryController {
     }
 
     @PostMapping()
-    public ResponseEntity<ConcertCategory> create(@Valid @RequestBody ConcertCategoryDto dto) {
-        return new ResponseEntity<>(this.categoryService.create(dto), HttpStatus.CREATED);
+    public ResponseEntity<ConcertCategoryDto> create(@Valid @RequestBody ConcertCategoryDto dto) {
+        return new ResponseEntity<>(new ConcertCategoryDto(this.categoryService.create(dto)), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<PageContent<ConcertCategory>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
+    public ResponseEntity<PageContent<ConcertCategoryDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
                                                              @RequestParam(value = "pageSize", defaultValue = "10") @Min(0) Integer pageSize) {
         return new ResponseEntity<>((this.categoryService.getAll(pageNo, pageSize)), HttpStatus.OK);
     }

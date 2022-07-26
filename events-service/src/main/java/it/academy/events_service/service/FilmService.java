@@ -4,75 +4,128 @@ package it.academy.events_service.service;
 import it.academy.events_service.dao.api.IFilmDao;
 
 import it.academy.events_service.dao.entity.FilmEvent;
+import it.academy.events_service.dao.enums.EEventStatus;
 import it.academy.events_service.dao.enums.EEventType;
-import it.academy.events_service.dto.FilmDto;
-import it.academy.events_service.dto.FilmDtoUpdate;
-import it.academy.events_service.dto.PageContent;
+import it.academy.events_service.dto.*;
 import it.academy.events_service.service.api.IFilmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
+
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Validated
+@Transactional(readOnly = true)
 public class FilmService implements IFilmService {
     private RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private final IFilmDao filmDao;
 
-    public FilmService(IFilmDao filmDao) {
+    private UserHolder holder;
+
+    public FilmService(IFilmDao filmDao, UserHolder holder) {
         this.filmDao = filmDao;
+        this.holder = holder;
     }
 
+    @Transactional
     @Override
-    public FilmEvent create(@Valid FilmDto filmDto) {
+    public FilmEvent create(@Valid FilmDtoCreate filmDto) {
         return this.filmDao.save(mapCreate(filmDto));
     }
 
     @Override
-    public PageContent<FilmDto> getAll(Integer pageNo, Integer pageSize) {
+    public PageContent<FilmDtoCreate> getAll(Integer pageNo, Integer pageSize) {
 
-        PageRequest paging = PageRequest.of(pageNo, pageSize);
+        UserDetails details = holder.getUser();
+        PageContent<FilmDtoCreate> content = new PageContent<>();
 
-        Page<FilmEvent> page = this.filmDao.findAll(paging);
-        return new PageContent(page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                (int) page.getTotalElements(),
-                page.isFirst(),
-                page.getNumberOfElements(),
-                page.isLast(),
-                page.getContent());
+        if (Objects.isNull(details)) {
+            PageRequest paging = PageRequest.of(pageNo, pageSize);
+            Page<FilmEvent> page = this.filmDao.findAllByStatus(EEventStatus.PUBLISHED, paging);
+
+            Page<FilmDtoCreate> dtoPage = page.map(FilmDtoCreate::new);
+            content = new PageContent<>(dtoPage.getNumber(),
+                    dtoPage.getSize(),
+                    dtoPage.getTotalPages(),
+                    (int) dtoPage.getTotalElements(),
+                    dtoPage.isFirst(),
+                    dtoPage.getNumberOfElements(),
+                    dtoPage.isLast(),
+                    dtoPage.getContent());
+
+        } else {
+
+            Collection<? extends GrantedAuthority> authorities = holder.getUser().getAuthorities();
+            List<GrantedAuthority> authorities1 = new ArrayList<>(authorities);
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorities1.get(0).toString().replace("\"", ""));
+
+            if (authority.equals(new SimpleGrantedAuthority("ADMIN"))) {
+
+                PageRequest paging = PageRequest.of(pageNo, pageSize);
+                Page<FilmEvent> page = this.filmDao.findAll(paging);
+
+                Page<FilmDtoCreate> dtoPage = page.map(FilmDtoCreate::new);
+                content = new PageContent<>(dtoPage.getNumber(),
+                        dtoPage.getSize(),
+                        dtoPage.getTotalPages(),
+                        (int) dtoPage.getTotalElements(),
+                        dtoPage.isFirst(),
+                        dtoPage.getNumberOfElements(),
+                        dtoPage.isLast(),
+                        dtoPage.getContent());
+
+            }
+
+            if (authority.equals(new SimpleGrantedAuthority("USER"))) {
+
+                PageRequest paging = PageRequest.of(pageNo, pageSize);
+                Page<FilmEvent> page = this.filmDao.findAllByStatusAndCreator(EEventStatus.PUBLISHED, holder.getUser().getUsername(), paging);
+
+                Page<FilmDtoCreate> dtoPage = page.map(FilmDtoCreate::new);
+                content = new PageContent<>(dtoPage.getNumber(),
+                        dtoPage.getSize(),
+                        dtoPage.getTotalPages(),
+                        (int) dtoPage.getTotalElements(),
+                        dtoPage.isFirst(),
+                        dtoPage.getNumberOfElements(),
+                        dtoPage.isLast(),
+                        dtoPage.getContent());
+
+            }
+        }
+        return content;
     }
+
 
     @Override
     public FilmEvent getOne(UUID uuid) {
 
-        List<UUID> getUuid = filmDao.findAll().stream().map(FilmEvent::getUuid).collect(Collectors.toList());
-
-        if (getUuid.contains(uuid)) {
+        if (this.filmDao.findByUuid(uuid) != null) {
             return this.filmDao.findByUuid(uuid);
 
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 
-
+    @Transactional
     @Override
     public FilmEvent update(FilmDtoUpdate filmDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate) {
 
-        List<UUID> getUuid = filmDao.findAll().stream().map(FilmEvent::getUuid).collect(Collectors.toList());
-
-        if (!getUuid.contains(uuid)) {
+        if (this.filmDao.findByUuid(uuid) == null) {
             throw new IllegalArgumentException("Введен неверный UUID!");
         }
 
@@ -82,10 +135,12 @@ public class FilmService implements IFilmService {
             throw new IllegalArgumentException("Данные уже были кем-то изменены до вас!");
         }
 
-        return this.filmDao.save(mapUpdate(filmEvent, filmDtoUpdate));
+        if (filmEvent.getCreator().equals(holder.getUser().getUsername())) {
+            return this.filmDao.save(mapUpdate(filmEvent, filmDtoUpdate));
+        } else throw new IllegalArgumentException("Вы не можете редактировать чужой фильм!");
     }
 
-    public FilmEvent mapCreate(FilmDto filmDto) {
+    public FilmEvent mapCreate(FilmDtoCreate filmDto) {
 
         FilmEvent filmEvent = new FilmEvent();
 
@@ -105,6 +160,9 @@ public class FilmService implements IFilmService {
         if (filmDto.getCountry() != null) {
             filmEvent.setCountry(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/country/" + filmDto.getCountry(), UUID.class));
         }
+
+        filmEvent.setCreator(holder.getUser().getUsername());
+
         return filmEvent;
     }
 

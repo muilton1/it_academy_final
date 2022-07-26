@@ -2,8 +2,8 @@ package it.academy.user_service.dao.entity;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import it.academy.user_service.controller.utils.LocalDateTimeDeserializer;
-import it.academy.user_service.controller.utils.LocalDateTimeSerializer;
+import it.academy.user_service.controller.utils.json.LocalDateTimeDeserializer;
+import it.academy.user_service.controller.utils.json.LocalDateTimeSerializer;
 import it.academy.user_service.dao.enums.EUserRole;
 import it.academy.user_service.dao.enums.EUserStatus;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,12 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "t_user", schema = "security")
+@Table(name = "users", schema = "security")
 public class User implements UserDetails {
     @Id
     private UUID uuid;

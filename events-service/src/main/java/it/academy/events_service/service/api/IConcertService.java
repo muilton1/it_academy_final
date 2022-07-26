@@ -1,7 +1,7 @@
 package it.academy.events_service.service.api;
 
 import it.academy.events_service.dao.entity.ConcertEvent;
-import it.academy.events_service.dto.ConcertDto;
+import it.academy.events_service.dto.ConcertDtoCreate;
 import it.academy.events_service.dto.ConcertDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IConcertService {
-    ConcertEvent create(@Valid ConcertDto concertDto);
+    ConcertEvent create(@Valid ConcertDtoCreate concertDto);
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 

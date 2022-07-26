@@ -3,12 +3,14 @@ package it.academy.classifier_service.service;
 import it.academy.classifier_service.dao.api.IConcertCategoryDao;
 import it.academy.classifier_service.dao.entity.ConcertCategory;
 import it.academy.classifier_service.dto.ConcertCategoryDto;
+import it.academy.classifier_service.dto.CountryDto;
 import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.IConcertCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
@@ -17,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @Validated
+@Transactional(readOnly = true)
 public class ConcertCategoryService implements IConcertCategoryService {
     @Autowired
     private final IConcertCategoryDao categoryDao;
@@ -24,7 +27,7 @@ public class ConcertCategoryService implements IConcertCategoryService {
     public ConcertCategoryService(IConcertCategoryDao categoryDao) {
         this.categoryDao = categoryDao;
     }
-
+    @Transactional
     @Override
     public ConcertCategory create(@Valid ConcertCategoryDto dto) {
         ConcertCategory category = new ConcertCategory();
@@ -38,17 +41,18 @@ public class ConcertCategoryService implements IConcertCategoryService {
     }
 
     @Override
-    public PageContent<ConcertCategory> getAll(Integer pageNo, Integer pageSize) {
+    public PageContent<ConcertCategoryDto> getAll(Integer pageNo, Integer pageSize) {
         PageRequest paging = PageRequest.of(pageNo, pageSize);
         Page<ConcertCategory> page = this.categoryDao.findAll(paging);
-        return new PageContent(page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                (int) page.getTotalElements(),
-                page.isFirst(),
-                page.getNumberOfElements(),
-                page.isLast(),
-                page.getContent());
+        Page<ConcertCategoryDto> dtoPage = page.map(ConcertCategoryDto::new);
+        return new PageContent<>(dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalPages(),
+                (int) dtoPage.getTotalElements(),
+                dtoPage.isFirst(),
+                dtoPage.getNumberOfElements(),
+                dtoPage.isLast(),
+                dtoPage.getContent());
     }
 
     @Override

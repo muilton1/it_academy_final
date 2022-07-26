@@ -2,15 +2,14 @@ package it.academy.user_service.controller.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import it.academy.user_service.controller.utils.LocalDateTimeDeserializer;
-import it.academy.user_service.controller.utils.LocalDateTimeSerializer;
+import it.academy.user_service.controller.utils.json.LocalDateTimeDeserializer;
+import it.academy.user_service.controller.utils.json.LocalDateTimeSerializer;
 import it.academy.user_service.dao.entity.User;
 import it.academy.user_service.dao.enums.EUserRole;
 import it.academy.user_service.dao.enums.EUserStatus;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Version;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

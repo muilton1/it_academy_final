@@ -2,7 +2,7 @@ package it.academy.events_service.controller;
 
 
 import it.academy.events_service.dao.entity.FilmEvent;
-import it.academy.events_service.dto.FilmDto;
+import it.academy.events_service.dto.FilmDtoCreate;
 import it.academy.events_service.dto.FilmDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IFilmService;
@@ -17,7 +17,6 @@ import javax.validation.constraints.Min;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.TimeZone;
 import java.util.UUID;
 
 @RestController
@@ -32,13 +31,14 @@ public class FilmController {
     }
 
     @PostMapping()
-    public ResponseEntity<FilmDto> create(@Valid @RequestBody FilmDto filmDto) {
-        return new ResponseEntity<>(new FilmDto(this.filmService.create(filmDto)), HttpStatus.CREATED);
+    public ResponseEntity<FilmDtoCreate> create(@Valid @RequestBody FilmDtoCreate filmDto) {
+
+        return new ResponseEntity<>(new FilmDtoCreate(this.filmService.create(filmDto)), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<PageContent<FilmDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
-                                                     @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
+    public ResponseEntity<PageContent<FilmDtoCreate>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
+                                                           @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
         return new ResponseEntity<>((this.filmService.getAll(pageNo, pageSize)), HttpStatus.OK);
     }
 

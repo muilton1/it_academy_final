@@ -1,5 +1,9 @@
 package it.academy.classifier_service.service;
 
+
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.databind.util.Converter;
 import it.academy.classifier_service.dao.api.ICountryDao;
 import it.academy.classifier_service.dao.entity.Country;
 import it.academy.classifier_service.dto.CountryDto;
@@ -9,14 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
+import java.lang.annotation.Annotation;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Service
 @Validated
+@Transactional(readOnly = true)
 public class CountryService implements ICountryService {
     @Autowired
     private final ICountryDao countryDao;
@@ -26,6 +34,7 @@ public class CountryService implements ICountryService {
         this.countryDao = countryDao;
     }
 
+    @Transactional
     @Override
     public Country create(@Valid CountryDto dto) {
         Country country = new Country();
@@ -40,17 +49,18 @@ public class CountryService implements ICountryService {
     }
 
     @Override
-    public PageContent<Country> getAll(Integer pageNo, Integer pageSize) {
+    public PageContent<CountryDto> getAll(Integer pageNo, Integer pageSize) {
         PageRequest paging = PageRequest.of(pageNo, pageSize);
         Page<Country> page = this.countryDao.findAll(paging);
-        return new PageContent(page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                (int) page.getTotalElements(),
-                page.isFirst(),
-                page.getNumberOfElements(),
-                page.isLast(),
-                page.getContent());
+        Page<CountryDto> dtoPage = page.map(CountryDto::new);
+        return new PageContent<>(dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalPages(),
+                (int) dtoPage.getTotalElements(),
+                dtoPage.isFirst(),
+                dtoPage.getNumberOfElements(),
+                dtoPage.isLast(),
+                dtoPage.getContent());
     }
 
     @Override

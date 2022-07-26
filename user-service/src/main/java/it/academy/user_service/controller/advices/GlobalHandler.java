@@ -3,6 +3,7 @@ package it.academy.user_service.controller.advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 
 @RestControllerAdvice
@@ -60,6 +63,13 @@ public class GlobalHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage onHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+
+        return new ErrorMessage("error", e.getLocalizedMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onUsernameNotFoundException(UsernameNotFoundException e) {
 
         return new ErrorMessage("error", e.getLocalizedMessage());
     }

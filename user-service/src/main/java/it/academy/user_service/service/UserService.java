@@ -1,38 +1,34 @@
 package it.academy.user_service.service;
 
-import it.academy.user_service.controller.dto.InformationDto;
 import it.academy.user_service.dao.api.IRoleDao;
 import it.academy.user_service.dao.api.IUserDao;
-import it.academy.user_service.dao.entity.Role;
 import it.academy.user_service.dao.entity.User;
 import it.academy.user_service.dao.enums.EUserRole;
 import it.academy.user_service.dao.enums.EUserStatus;
 import it.academy.user_service.dto.PageContent;
 import it.academy.user_service.dto.UserDto;
 import it.academy.user_service.service.api.IUserService;
-import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
-import javax.transaction.Transactional;
+
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-@Transactional
+
+@Transactional(readOnly = true)
 @Service
 @Validated
 public class UserService implements UserDetailsService, IUserService {
@@ -48,6 +44,7 @@ public class UserService implements UserDetailsService, IUserService {
         this.roleDao = roleDao;
         this.encoder = encoder;
     }
+
     @Transactional
     @Override
     public User create(@Valid UserDto userDto) {
@@ -56,9 +53,16 @@ public class UserService implements UserDetailsService, IUserService {
         user.setUuid(UUID.randomUUID());
         user.setDtCreate(LocalDateTime.now());
         user.setDtUpdate(user.getDtCreate().truncatedTo(ChronoUnit.MILLIS));
-        user.setMail(userDto.getMail());
-        user.setNick(userDto.getNick());
-        user.setStatus(userDto.getStatus());
+
+        if (userDao.findByMail(userDto.getMail()) == null) {
+            user.setMail(userDto.getMail());
+        } else throw new IllegalArgumentException("Такой емейл уже зарегистрирован!");
+
+        if (userDao.findByNick(userDto.getNick()) == null) {
+            user.setNick(userDto.getNick());
+        } else throw new IllegalArgumentException("Имя пользователя занято!");
+
+        user.setStatus(EUserStatus.WAITING_ACTIVATION);
         user.setRole(EUserRole.USER);
 
         user.setPassword(encoder.encode(userDto.getPassword()));
@@ -80,15 +84,12 @@ public class UserService implements UserDetailsService, IUserService {
                 page.isLast(),
                 page.getContent());
     }
-
+    @Transactional
     @Override
     public User update(UserDto userDto, UUID uuid, LocalDateTime lastKnowDtUpdate) {
-        List<User> users = this.userDao.findAll();
 
-        for (User user : users) {
-            if (!user.getUuid().equals(uuid)) {
-                throw new IllegalArgumentException("Введен некорректный UUID!");
-            }
+        if (this.userDao.findByUuid(uuid) == null) {
+            throw new IllegalArgumentException("Введен неверный UUID!");
         }
 
         User user = this.userDao.findByUuid(uuid);
@@ -97,33 +98,45 @@ public class UserService implements UserDetailsService, IUserService {
             throw new IllegalArgumentException("Данные уже были кем-то изменены до вас!");
         }
 
-        user.setMail(userDto.getMail());
-        user.setNick(userDto.getNick());
-        user.setStatus(userDto.getStatus());
-        user.setRole(userDto.getRole());
-        user.setPassword(encoder.encode(user.getPassword()));
-
-        this.userDao.save(user);
-
-        return this.userDao.findByUuid(uuid);
+        return this.userDao.save(mapUpdate(user, userDto));
     }
 
     @Override
     public User getOne(UUID uuid) {
-        List<UUID> getUuid = userDao.findAll().stream().map(User::getUuid).collect(Collectors.toList());
-        if (getUuid.contains(uuid)) {
+
+        if (this.userDao.findByUuid(uuid) != null) {
             return this.userDao.findByUuid(uuid);
+
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 
     @Override
     public UserDetails loadUserByUsername(String mail) throws UsernameNotFoundException {
-        User user = userDao.findByMail(mail);
 
-        if (user == null) {
-            throw new UsernameNotFoundException("User not found");
+        if (userDao.findByMail(mail) != null) {
+            return userDao.findByMail(mail);
+
+        } else throw new UsernameNotFoundException("Нет пользователя с такой почтой!");
+    }
+
+    public User mapUpdate(User user, UserDto userDto) {
+        if (userDto.getMail() != null) {
+            user.setMail(userDto.getMail());
+        }
+        if (userDto.getNick() != null) {
+            user.setNick(userDto.getNick());
+        }
+        if (userDto.getStatus() != null) {
+            user.setStatus(userDto.getStatus());
+        }
+        if (userDto.getRole() != null) {
+            user.setRole(userDto.getRole());
+        }
+        if (userDto.getPassword() != null) {
+            user.setPassword(encoder.encode(user.getPassword()));
         }
 
         return user;
     }
+
 }

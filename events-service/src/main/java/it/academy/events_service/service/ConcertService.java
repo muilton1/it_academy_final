@@ -5,77 +5,127 @@ import it.academy.events_service.dao.api.IConcertDao;
 import it.academy.events_service.dao.entity.ConcertEvent;
 
 import it.academy.events_service.dao.entity.FilmEvent;
+import it.academy.events_service.dao.enums.EEventStatus;
 import it.academy.events_service.dao.enums.EEventType;
-import it.academy.events_service.dto.ConcertDto;
+import it.academy.events_service.dto.ConcertDtoCreate;
 
 import it.academy.events_service.dto.ConcertDtoUpdate;
-import it.academy.events_service.dto.FilmDtoUpdate;
+import it.academy.events_service.dto.FilmDtoCreate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IConcertService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @Validated
+@Transactional(readOnly = true)
 public class ConcertService implements IConcertService {
     private RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private final IConcertDao concertDao;
 
-    public ConcertService(IConcertDao concertDao) {
+    private UserHolder holder;
+
+    public ConcertService(IConcertDao concertDao, UserHolder holder) {
         this.concertDao = concertDao;
+        this.holder = holder;
 
     }
 
+    @Transactional
     @Override
-    public ConcertEvent create(@Valid ConcertDto concertDto) {
+    public ConcertEvent create(@Valid ConcertDtoCreate concertDto) {
         return this.concertDao.save(mapCreate(concertDto));
     }
 
     @Override
-    public PageContent<ConcertEvent> getAll(Integer pageNo, Integer pageSize) {
+    public PageContent<ConcertDtoCreate> getAll(Integer pageNo, Integer pageSize) {
 
-        PageRequest paging = PageRequest.of(pageNo, pageSize);
+        PageContent<ConcertDtoCreate> content = new PageContent<>();
 
-        Page<ConcertEvent> page = this.concertDao.findAll(paging);
-        return new PageContent(page.getNumber(),
-                page.getSize(),
-                page.getTotalPages(),
-                (int) page.getTotalElements(),
-                page.isFirst(),
-                page.getNumberOfElements(),
-                page.isLast(),
-                page.getContent());
+        if (Objects.isNull(holder.getUser())) {
+            PageRequest paging = PageRequest.of(pageNo, pageSize);
+            Page<ConcertEvent> page = this.concertDao.findAllByStatus(EEventStatus.PUBLISHED, paging);
+
+            Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
+            content = new PageContent<>(dtoPage.getNumber(),
+                    dtoPage.getSize(),
+                    dtoPage.getTotalPages(),
+                    (int) dtoPage.getTotalElements(),
+                    dtoPage.isFirst(),
+                    dtoPage.getNumberOfElements(),
+                    dtoPage.isLast(),
+                    dtoPage.getContent());
+
+        } else {
+
+            Collection<? extends GrantedAuthority> authorities = holder.getUser().getAuthorities();
+            List<GrantedAuthority> authorities1 = new ArrayList<>(authorities);
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorities1.get(0).toString().replace("\"", ""));
+
+            if (authority.equals(new SimpleGrantedAuthority("ADMIN"))) {
+
+                PageRequest paging = PageRequest.of(pageNo, pageSize);
+                Page<ConcertEvent> page = this.concertDao.findAll(paging);
+
+                Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
+                content = new PageContent<>(dtoPage.getNumber(),
+                        dtoPage.getSize(),
+                        dtoPage.getTotalPages(),
+                        (int) dtoPage.getTotalElements(),
+                        dtoPage.isFirst(),
+                        dtoPage.getNumberOfElements(),
+                        dtoPage.isLast(),
+                        dtoPage.getContent());
+
+            }
+
+            if (authority.equals(new SimpleGrantedAuthority("USER"))) {
+
+                PageRequest paging = PageRequest.of(pageNo, pageSize);
+                Page<ConcertEvent> page = this.concertDao.findAllByStatusAndCreator(EEventStatus.PUBLISHED, holder.getUser().getUsername(), paging);
+
+                Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
+                content = new PageContent<>(dtoPage.getNumber(),
+                        dtoPage.getSize(),
+                        dtoPage.getTotalPages(),
+                        (int) dtoPage.getTotalElements(),
+                        dtoPage.isFirst(),
+                        dtoPage.getNumberOfElements(),
+                        dtoPage.isLast(),
+                        dtoPage.getContent());
+
+            }
+        }
+        return content;
     }
 
     @Override
     public ConcertEvent getOne(UUID uuid) {
 
-        List<UUID> getUuid = concertDao.findAll().stream().map(ConcertEvent::getUuid).collect(Collectors.toList());
-
-        if (getUuid.contains(uuid)) {
+        if (this.concertDao.findByUuid(uuid) != null) {
             return this.concertDao.findByUuid(uuid);
 
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 
-
+    @Transactional
     @Override
     public ConcertEvent update(ConcertDtoUpdate concertDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate) {
 
-        List<UUID> getUuid = concertDao.findAll().stream().map(ConcertEvent::getUuid).collect(Collectors.toList());
-
-        if (!getUuid.contains(uuid)) {
+        if (this.concertDao.findByUuid(uuid) == null) {
             throw new IllegalArgumentException("Введен неверный UUID!");
         }
 
@@ -88,7 +138,7 @@ public class ConcertService implements IConcertService {
         return this.concertDao.save(mapUpdate(concertEvent, concertDtoUpdate));
     }
 
-    public ConcertEvent mapCreate(ConcertDto concertDto) {
+    public ConcertEvent mapCreate(ConcertDtoCreate concertDto) {
         ConcertEvent concertEvent = new ConcertEvent();
 
         concertEvent.setUuid(UUID.randomUUID());

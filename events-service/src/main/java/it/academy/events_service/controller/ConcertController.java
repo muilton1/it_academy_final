@@ -1,7 +1,7 @@
 package it.academy.events_service.controller;
 
 import it.academy.events_service.dao.entity.ConcertEvent;
-import it.academy.events_service.dto.ConcertDto;
+import it.academy.events_service.dto.ConcertDtoCreate;
 import it.academy.events_service.dto.ConcertDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IConcertService;
@@ -16,7 +16,6 @@ import javax.validation.constraints.Min;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.TimeZone;
 import java.util.UUID;
 
 @RestController
@@ -31,13 +30,13 @@ public class ConcertController {
     }
 
     @PostMapping()
-    public ResponseEntity<ConcertDto> create(@Valid @RequestBody ConcertDto concertDto) {
-        return new ResponseEntity<>(new ConcertDto(this.concertService.create(concertDto)), HttpStatus.CREATED);
+    public ResponseEntity<ConcertDtoCreate> create(@Valid @RequestBody ConcertDtoCreate concertDto) {
+        return new ResponseEntity<>(new ConcertDtoCreate(this.concertService.create(concertDto)), HttpStatus.CREATED);
     }
 
     @GetMapping()
-    public ResponseEntity<PageContent<ConcertDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
-                                                        @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
+    public ResponseEntity<PageContent<ConcertDtoCreate>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
+                                                              @RequestParam(value = "pageSize", defaultValue = "20") @Min(1) Integer pageSize) {
         return new ResponseEntity<>((this.concertService.getAll(pageNo, pageSize)), HttpStatus.OK);
     }
 

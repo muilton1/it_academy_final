@@ -13,7 +13,6 @@ public class UserDto implements Serializable {
     private String nick;
     private EUserRole role;
     private EUserStatus status;
-
     private String password;
 
     public UserDto() {

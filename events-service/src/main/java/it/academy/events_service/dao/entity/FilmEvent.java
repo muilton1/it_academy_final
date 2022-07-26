@@ -45,6 +45,8 @@ public class FilmEvent {
     private UUID country;
     private int duration;
 
+    private String creator;
+
     public FilmEvent() {
     }
 
@@ -152,5 +154,13 @@ public class FilmEvent {
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

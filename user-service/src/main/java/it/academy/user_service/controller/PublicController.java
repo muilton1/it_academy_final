@@ -6,25 +6,31 @@ import it.academy.user_service.controller.dto.RegistrationDto;
 import it.academy.user_service.controller.utils.JwtTokenUtil;
 
 import it.academy.user_service.dao.entity.User;
+import it.academy.user_service.dao.enums.EUserRole;
 import it.academy.user_service.dto.UserDto;
 import it.academy.user_service.service.UserHolder;
 import it.academy.user_service.service.UserService;
 import it.academy.user_service.service.api.IUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Arrays;
+import java.util.Objects;
 
 @RestController
-@RequestMapping("/public")
+@RequestMapping("/api/v1/users")
+@Validated
 public class PublicController {
-
+    @Autowired
     private final UserService userService;
     private final PasswordEncoder encoder;
-
     private UserHolder holder;
 
     public PublicController(UserService userService,
@@ -36,8 +42,7 @@ public class PublicController {
 
     @PostMapping("/registration")
     public ResponseEntity<InformationDto> create(@Valid @RequestBody UserDto dto) {
-        User user = this.userService.create(dto);
-        return new ResponseEntity<>(new InformationDto(user), HttpStatus.CREATED);
+        return new ResponseEntity<>(new InformationDto(this.userService.create(dto)), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
@@ -56,4 +61,13 @@ public class PublicController {
         User user = holder.getUser();
         return new InformationDto(user);
     }
+
+    @GetMapping("/role")
+    public String getAuthorities() {
+        User user = holder.getUser();
+        return user.getRole().name();
+
+    }
 }
+
+

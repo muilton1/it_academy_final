@@ -38,6 +38,8 @@ public class ConcertEvent {
 
     private UUID category;
 
+    private String creator;
+
     public ConcertEvent() {
     }
 
@@ -120,5 +122,13 @@ public class ConcertEvent {
 
     public void setCategory(UUID category) {
         this.category = category;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }
