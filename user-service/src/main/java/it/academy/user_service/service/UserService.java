@@ -28,9 +28,7 @@ import java.util.UUID;
 @Service
 @Validated
 public class UserService implements UserDetailsService, IUserService {
-    @Autowired
     private final IUserDao userDao;
-    @Autowired
     private final IRoleDao roleDao;
     private final PasswordEncoder encoder;
 

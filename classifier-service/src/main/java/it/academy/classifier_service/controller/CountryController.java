@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/classifier/country")
-@Validated
+
 public class CountryController {
     private final ICountryService countryService;
 
@@ -25,7 +25,7 @@ public class CountryController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@Valid @RequestBody CountryDto dto) {
+    public void create(@RequestBody CountryDto dto) {
         this.countryService.create(dto);
     }
 

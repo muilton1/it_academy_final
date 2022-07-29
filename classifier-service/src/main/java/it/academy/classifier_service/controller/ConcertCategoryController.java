@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/classifier/concert/category")
-@Validated
+
 public class ConcertCategoryController {
     private final IConcertCategoryService categoryService;
 
@@ -24,7 +24,7 @@ public class ConcertCategoryController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@Valid @RequestBody ConcertCategoryDto dto) {
+    public void create(@RequestBody ConcertCategoryDto dto) {
         this.categoryService.create(dto);
     }
 

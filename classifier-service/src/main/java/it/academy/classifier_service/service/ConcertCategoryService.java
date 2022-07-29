@@ -21,7 +21,6 @@ import java.util.UUID;
 @Validated
 @Transactional(readOnly = true)
 public class ConcertCategoryService implements IConcertCategoryService {
-    @Autowired
     private final IConcertCategoryDao categoryDao;
     private UserHolder holder;
 
