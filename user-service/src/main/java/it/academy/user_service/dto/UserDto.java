@@ -5,8 +5,11 @@ import it.academy.user_service.dao.enums.EUserRole;
 import it.academy.user_service.dao.enums.EUserStatus;
 import org.springframework.validation.annotation.Validated;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
+
 @Validated
 public class UserDto implements Serializable {
     private String mail;
@@ -23,13 +26,17 @@ public class UserDto implements Serializable {
         this.nick = entity.getNick();
         this.role = entity.getRole();
         this.status = entity.getStatus();
-        this.password=entity.getPassword();
+        this.password = entity.getPassword();
     }
-    @NotBlank(message = "Заполните email !")
+
+    @NotEmpty(message = "Заполните email !")
+    @Email(message = "Неверный формат почты!")
     public String getMail() {
         return mail;
     }
-    @NotBlank(message = "Заполните псевдоним !")
+
+
+    @Size(min = 2, max = 20, message = "Никнейм должен быть от 2 до 20 символов!")
     public String getNick() {
         return nick;
     }
@@ -42,6 +49,8 @@ public class UserDto implements Serializable {
         return status;
     }
 
+    @NotEmpty(message = "Заполните псевдоним !")
+    @Size(min = 2, max = 20, message = "Никнейм должен быть от 2 до 20 символов!")
     public String getPassword() {
         return password;
     }

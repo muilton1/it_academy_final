@@ -9,6 +9,9 @@ import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dao.enums.EEventStatus;
 import org.springframework.validation.annotation.Validated;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +19,6 @@ import java.util.UUID;
 
 @Validated
 public class FilmDtoUpdate {
-
     private String title;
     private String description;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -31,6 +33,7 @@ public class FilmDtoUpdate {
     private LocalDate releaseDate;
     private UUID country;
     private int duration;
+    private String creator;
 
     public FilmDtoUpdate() {
     }
@@ -45,8 +48,10 @@ public class FilmDtoUpdate {
         this.releaseDate = entity.getReleaseDate();
         this.country = entity.getCountry();
         this.duration = entity.getDuration();
+        this.creator = entity.getCreator();
     }
 
+    @NotBlank(message = "Заполните название фильма!")
     public String getTitle() {
         return title;
     }
@@ -55,6 +60,7 @@ public class FilmDtoUpdate {
         this.title = title;
     }
 
+    @NotBlank(message = "Заполните описание фильма!")
     public String getDescription() {
         return description;
     }
@@ -63,6 +69,7 @@ public class FilmDtoUpdate {
         this.description = description;
     }
 
+    @NotNull(message = "Заполните дату фильма!")
     public LocalDateTime getDtEvent() {
         return dtEvent;
     }
@@ -71,6 +78,7 @@ public class FilmDtoUpdate {
         this.dtEvent = dtEvent;
     }
 
+    @NotNull(message = "Заполните конец продажи билетов на фильм!")
     public LocalDateTime getDtEndOfSale() {
         return dtEndOfSale;
     }
@@ -79,6 +87,7 @@ public class FilmDtoUpdate {
         this.dtEndOfSale = dtEndOfSale;
     }
 
+    @NotNull(message = "Заполните статус фильма!")
     public EEventStatus getStatus() {
         return status;
     }
@@ -87,6 +96,7 @@ public class FilmDtoUpdate {
         this.status = status;
     }
 
+    @NotNull(message = "Заполните дату выпуска фильма!")
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -95,6 +105,7 @@ public class FilmDtoUpdate {
         this.releaseDate = releaseDate;
     }
 
+    @NotNull(message = "Заполните страну фильма!")
     public UUID getCountry() {
         return country;
     }
@@ -103,6 +114,8 @@ public class FilmDtoUpdate {
         this.country = country;
     }
 
+    @Min(value = 1895, message = "Год выпуска должен быть не меньше 1895!")
+    @Max(value = 2024, message = "Год выпуска должен быть не больше 2024!")
     public int getReleaseYear() {
         return releaseYear;
     }
@@ -111,11 +124,20 @@ public class FilmDtoUpdate {
         this.releaseYear = releaseYear;
     }
 
+    @Min(value = 1, message = "Длительность фильма должна быть больше 1 минуты!")
     public int getDuration() {
         return duration;
     }
 
     public void setDuration(int duration) {
         this.duration = duration;
+    }
+
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

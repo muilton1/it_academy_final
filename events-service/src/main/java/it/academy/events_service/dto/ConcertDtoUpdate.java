@@ -23,10 +23,9 @@ public class ConcertDtoUpdate {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
-
     private EEventStatus status;
-
     private UUID category;
+    private String creator;
 
     public ConcertDtoUpdate() {
     }
@@ -37,9 +36,11 @@ public class ConcertDtoUpdate {
         this.dtEvent = entity.getDtEvent();
         this.dtEndOfSale = entity.getDtEndOfSale();
         this.status = entity.getStatus();
-        this.category= entity.getCategory();
+        this.category = entity.getCategory();
+        this.creator = entity.getCreator();
     }
 
+    @NotBlank(message = "Заполните название концерта!")
     public String getTitle() {
         return title;
     }
@@ -48,6 +49,7 @@ public class ConcertDtoUpdate {
         this.title = title;
     }
 
+    @NotNull(message = "Заполните описание концерта!")
     public String getDescription() {
         return description;
     }
@@ -56,6 +58,7 @@ public class ConcertDtoUpdate {
         this.description = description;
     }
 
+    @NotNull(message = "Заполните дату концерта!")
     public LocalDateTime getDtEvent() {
         return dtEvent;
     }
@@ -64,6 +67,7 @@ public class ConcertDtoUpdate {
         this.dtEvent = dtEvent;
     }
 
+    @NotNull(message = "Заполните дату окончания продажи билетов на концерт!")
     public LocalDateTime getDtEndOfSale() {
         return dtEndOfSale;
     }
@@ -72,6 +76,7 @@ public class ConcertDtoUpdate {
         this.dtEndOfSale = dtEndOfSale;
     }
 
+    @NotNull(message = "Заполните статус концерта!")
     public EEventStatus getStatus() {
         return status;
     }
@@ -80,6 +85,7 @@ public class ConcertDtoUpdate {
         this.status = status;
     }
 
+    @NotNull(message = "Заполните категорию концерта!")
     public UUID getCategory() {
         return category;
     }
@@ -88,15 +94,11 @@ public class ConcertDtoUpdate {
         this.category = category;
     }
 
-    @Override
-    public String toString() {
-        return "ConcertDto{" +
-                "title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", dtEvent=" + dtEvent +
-                ", dtEndOfSale=" + dtEndOfSale +
-                ", status=" + status +
-                ", category=" + category +
-                '}';
+    public String getCreator() {
+        return creator;
+    }
+
+    public void setCreator(String creator) {
+        this.creator = creator;
     }
 }

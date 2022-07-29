@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "categories",schema = "classifier")
+@Table(name = "categories", schema = "classifier")
 public class ConcertCategory {
     @Id
     private UUID uuid;

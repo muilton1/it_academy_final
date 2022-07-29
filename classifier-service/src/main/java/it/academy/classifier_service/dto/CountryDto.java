@@ -4,6 +4,7 @@ import it.academy.classifier_service.dao.entity.Country;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+
 @Validated
 public class CountryDto {
     private String title;
@@ -16,6 +17,7 @@ public class CountryDto {
         this.title = entity.getTitle();
         this.description = entity.getDescription();
     }
+
     @NotBlank(message = "Заполните название страны!")
     public String getTitle() {
         return title;
@@ -24,6 +26,7 @@ public class CountryDto {
     public void setTitle(String title) {
         this.title = title;
     }
+
     @NotBlank(message = "Заполните описание страны!")
     public String getDescription() {
         return description;

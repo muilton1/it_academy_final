@@ -3,8 +3,6 @@ package it.academy.events_service.dao.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.DurationDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.DurationSerializer;
 import it.academy.events_service.controller.utils.json.LocalDateTimeDeserializer;
 import it.academy.events_service.controller.utils.json.LocalDateTimeSerializer;
 import it.academy.events_service.dao.enums.EEventStatus;
@@ -44,7 +42,6 @@ public class FilmEvent {
     private LocalDate releaseDate;
     private UUID country;
     private int duration;
-
     private String creator;
 
     public FilmEvent() {

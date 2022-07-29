@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name="concerts",schema = "event")
+@Table(name = "concerts", schema = "event")
 public class ConcertEvent {
     @Id
     private UUID uuid;
@@ -35,9 +35,7 @@ public class ConcertEvent {
     private EEventType type;
     @Enumerated(EnumType.STRING)
     private EEventStatus status;
-
     private UUID category;
-
     private String creator;
 
     public ConcertEvent() {

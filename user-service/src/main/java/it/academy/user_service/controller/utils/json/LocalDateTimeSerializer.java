@@ -12,7 +12,7 @@ public class LocalDateTimeSerializer extends JsonSerializer<LocalDateTime> {
 
     @Override
     public void serialize(LocalDateTime value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-        if(value != null){
+        if (value != null) {
             gen.writeNumber(value.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         } else {
             gen.writeNull();

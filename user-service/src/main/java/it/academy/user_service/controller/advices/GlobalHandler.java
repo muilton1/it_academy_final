@@ -3,23 +3,18 @@ package it.academy.user_service.controller.advices;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import java.util.ArrayList;
+import java.net.ConnectException;
 import java.util.List;
-import java.util.Objects;
 
 
 @RestControllerAdvice
 public class GlobalHandler {
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Object onConstraintValidationException(
@@ -29,7 +24,7 @@ public class GlobalHandler {
         for (ConstraintViolation violation : e.getConstraintViolations()) {
             error.getErrorMessages().add(
                     new ErrorMessage(violation.getPropertyPath().toString().
-                            substring(violation.getPropertyPath().toString().lastIndexOf(".") + 1) + " - ошибка в данном поле!", violation.getMessage()));
+                            substring(violation.getPropertyPath().toString().lastIndexOf(".") + 1), violation.getMessage()));
         }
         List<ErrorMessage> errorMessages = error.getErrorMessages();
 
@@ -38,18 +33,6 @@ public class GlobalHandler {
         } else {
             return errorMessages.get(0);
         }
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onMethodArgumentNotValidException(
-            MethodArgumentNotValidException e) {
-        ErrorResponse error = new ErrorResponse();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getErrorMessages().add(
-                    new ErrorMessage(fieldError.getField(), fieldError.getDefaultMessage()));
-        }
-        return error;
     }
 
     @ExceptionHandler
@@ -69,9 +52,16 @@ public class GlobalHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorMessage onUsernameNotFoundException(UsernameNotFoundException e) {
+    public ErrorMessage onClassCastException(ClassCastException e) {
 
-        return new ErrorMessage("error", e.getLocalizedMessage());
+        return new ErrorMessage("error", "Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onClassCastException(ConnectException e) {
+
+        return new ErrorMessage("error", "Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору");
     }
 }
 

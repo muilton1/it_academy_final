@@ -3,8 +3,9 @@ package it.academy.classifier_service.service;
 import it.academy.classifier_service.dao.api.IConcertCategoryDao;
 import it.academy.classifier_service.dao.entity.ConcertCategory;
 import it.academy.classifier_service.dto.ConcertCategoryDto;
-import it.academy.classifier_service.dto.CountryDto;
 import it.academy.classifier_service.dto.PageContent;
+import it.academy.classifier_service.mappers.FromConcertCategoryDtoToConcertCategory;
+import it.academy.classifier_service.mappers.PageContentMapper;
 import it.academy.classifier_service.service.api.IConcertCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -23,36 +23,27 @@ import java.util.UUID;
 public class ConcertCategoryService implements IConcertCategoryService {
     @Autowired
     private final IConcertCategoryDao categoryDao;
+    private UserHolder holder;
 
-    public ConcertCategoryService(IConcertCategoryDao categoryDao) {
+    public ConcertCategoryService(IConcertCategoryDao categoryDao, UserHolder holder) {
         this.categoryDao = categoryDao;
+        this.holder = holder;
     }
+
     @Transactional
     @Override
-    public ConcertCategory create(@Valid ConcertCategoryDto dto) {
-        ConcertCategory category = new ConcertCategory();
-
-        category.setUuid(UUID.randomUUID());
-        category.setDtCreate(LocalDateTime.now());
-        category.setDtUpdate(category.getDtCreate());
-        category.setTitle(dto.getTitle());
-
-        return this.categoryDao.save(category);
+    public void create(@Valid ConcertCategoryDto dto) {
+        FromConcertCategoryDtoToConcertCategory mapper = new FromConcertCategoryDtoToConcertCategory();
+        this.categoryDao.save(mapper.convert(dto));
     }
 
     @Override
     public PageContent<ConcertCategoryDto> getAll(Integer pageNo, Integer pageSize) {
+        PageContentMapper<ConcertCategoryDto> mapper = new PageContentMapper<>();
         PageRequest paging = PageRequest.of(pageNo, pageSize);
         Page<ConcertCategory> page = this.categoryDao.findAll(paging);
         Page<ConcertCategoryDto> dtoPage = page.map(ConcertCategoryDto::new);
-        return new PageContent<>(dtoPage.getNumber(),
-                dtoPage.getSize(),
-                dtoPage.getTotalPages(),
-                (int) dtoPage.getTotalElements(),
-                dtoPage.isFirst(),
-                dtoPage.getNumberOfElements(),
-                dtoPage.isLast(),
-                dtoPage.getContent());
+        return mapper.map(dtoPage);
     }
 
     @Override

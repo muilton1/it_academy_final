@@ -1,7 +1,6 @@
 package it.academy.user_service.config;
 
 import it.academy.user_service.controller.filter.JwtFilter;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -12,14 +11,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final JwtFilter filter;
-
 
     public SecurityConfig(JwtFilter filter) {
         this.filter = filter;
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

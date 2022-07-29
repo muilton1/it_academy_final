@@ -12,14 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final JwtFilter filter;
-
 
     public SecurityConfig(JwtFilter filter) {
         this.filter = filter;
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -48,10 +45,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers(HttpMethod.GET).anonymous()
-
+                .antMatchers(HttpMethod.GET).permitAll()
+                .antMatchers(HttpMethod.POST).hasAuthority("ADMIN")
                 // Our private endpoints
-                .anyRequest().hasRole("ADMIN");
+                .anyRequest().hasAuthority("ADMIN");
 
         // Add JWT token filter
         http.addFilterBefore(

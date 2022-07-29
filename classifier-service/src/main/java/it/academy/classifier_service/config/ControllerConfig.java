@@ -13,7 +13,6 @@ import java.util.List;
 
 @Configuration
 public class ControllerConfig {
-
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();

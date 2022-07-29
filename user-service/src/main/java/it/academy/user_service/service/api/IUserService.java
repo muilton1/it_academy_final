@@ -9,11 +9,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IUserService {
-    User create(@Valid UserDto userDto);
+    void create(@Valid UserDto userDto);
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 
-    User update(UserDto userDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
+    void update(UserDto userDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
 
     User getOne(UUID uuid);
 }

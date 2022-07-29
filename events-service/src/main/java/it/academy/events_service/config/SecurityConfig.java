@@ -12,14 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final JwtFilter filter;
-
 
     public SecurityConfig(JwtFilter filter) {
         this.filter = filter;
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

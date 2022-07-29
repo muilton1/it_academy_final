@@ -1,7 +1,6 @@
 package it.academy.events_service.controller.advices;
 
 
-
 public class ErrorMessage {
     private String logref;
     private String message;

@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IConcertService {
-    ConcertEvent create(@Valid ConcertDtoCreate concertDto);
+    void create(@Valid ConcertDtoCreate concertDto);
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 
-    ConcertEvent update(ConcertDtoUpdate concertDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
+    void update(ConcertDtoUpdate concertDto, UUID uuid, LocalDateTime lastKnowDtUpdate);
 
     ConcertEvent getOne(UUID uuid);
 }

@@ -4,25 +4,20 @@ import it.academy.user_service.dao.entity.User;
 import it.academy.user_service.dto.PageContent;
 import it.academy.user_service.dto.UserDto;
 import it.academy.user_service.service.api.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.TimeZone;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
-@Validated
+
 public class AdminController {
-    @Autowired
     private final IUserService userService;
 
     public AdminController(IUserService userService) {
@@ -30,8 +25,9 @@ public class AdminController {
     }
 
     @PostMapping()
-    public ResponseEntity<User> create(@Valid @RequestBody UserDto userDto) {
-        return new ResponseEntity<>(this.userService.create(userDto), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void create(@RequestBody UserDto userDto) {
+        this.userService.create(userDto);
     }
 
     @GetMapping()
@@ -46,8 +42,9 @@ public class AdminController {
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_create}")
-    public ResponseEntity<User> update(@Valid @RequestBody UserDto userDto, @PathVariable UUID uuid, @PathVariable Long dt_create) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void update(@RequestBody UserDto userDto, @PathVariable UUID uuid, @PathVariable Long dt_create) {
         LocalDateTime lastKnowDtUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dt_create), ZoneId.systemDefault());
-        return new ResponseEntity<>(this.userService.update(userDto, uuid, lastKnowDtUpdate), HttpStatus.OK);
+        this.userService.update(userDto, uuid, lastKnowDtUpdate);
     }
 }

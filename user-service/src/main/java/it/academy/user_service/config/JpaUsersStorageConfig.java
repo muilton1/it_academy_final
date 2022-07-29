@@ -8,25 +8,17 @@ import it.academy.user_service.dao.enums.EUserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.UUID;
 
 @Configuration
 public class JpaUsersStorageConfig {
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -36,6 +28,7 @@ public class JpaUsersStorageConfig {
     private IRoleDao roleDao;
     @Autowired
     private IUserDao userDao;
+
     @PostConstruct
     public void postConstruct() {
 

@@ -1,11 +1,9 @@
 package it.academy.classifier_service.controller;
 
 
-import it.academy.classifier_service.dao.entity.Country;
 import it.academy.classifier_service.dto.CountryDto;
 import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.ICountryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -13,14 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import java.util.TimeZone;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/classifier/country")
 @Validated
 public class CountryController {
-    @Autowired
     private final ICountryService countryService;
 
     public CountryController(ICountryService countryService) {
@@ -28,13 +24,14 @@ public class CountryController {
     }
 
     @PostMapping()
-    public ResponseEntity<CountryDto> create(@Valid @RequestBody CountryDto dto) {
-        return new ResponseEntity<>(new CountryDto(this.countryService.create(dto)), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void create(@Valid @RequestBody CountryDto dto) {
+        this.countryService.create(dto);
     }
 
     @GetMapping()
     public ResponseEntity<PageContent<CountryDto>> read(@RequestParam(value = "pageNo", defaultValue = "0") @Min(0) Integer pageNo,
-                                                     @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
+                                                        @RequestParam(value = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
         return new ResponseEntity<>(this.countryService.getAll(pageNo, pageSize), HttpStatus.OK);
     }
 

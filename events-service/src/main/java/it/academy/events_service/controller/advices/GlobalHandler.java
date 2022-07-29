@@ -1,14 +1,11 @@
 package it.academy.events_service.controller.advices;
 
-import org.springframework.data.crossstore.ChangeSetPersister;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.NoHandlerFoundException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -27,7 +24,7 @@ public class GlobalHandler {
         for (ConstraintViolation violation : e.getConstraintViolations()) {
             error.getErrorMessages().add(
                     new ErrorMessage(violation.getPropertyPath().toString().
-                            substring(violation.getPropertyPath().toString().lastIndexOf(".") + 1) + " - ошибка в данном поле!", violation.getMessage()));
+                            substring(violation.getPropertyPath().toString().lastIndexOf(".") + 1), violation.getMessage()));
         }
         List<ErrorMessage> errorMessages = error.getErrorMessages();
 
@@ -36,18 +33,6 @@ public class GlobalHandler {
         } else {
             return errorMessages.get(0);
         }
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onMethodArgumentNotValidException(
-            MethodArgumentNotValidException e) {
-        ErrorResponse error = new ErrorResponse();
-        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
-            error.getErrorMessages().add(
-                    new ErrorMessage(fieldError.getField(), fieldError.getDefaultMessage()));
-        }
-        return error;
     }
 
     @ExceptionHandler
@@ -67,13 +52,17 @@ public class GlobalHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorMessage onNotFoundException(
-            NoHandlerFoundException e) {
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onUnexpectedTypeException(InvalidFormatException e) {
 
-        return new ErrorMessage("error", "NOT FOUND");
+        return new ErrorMessage("error", e.getMessage());
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage onClassCastException(ClassCastException e) {
 
+        return new ErrorMessage("error", "Сервер не смог корректно обработать запрос. Пожалуйста обратитесь к администратору");
+    }
 }
 

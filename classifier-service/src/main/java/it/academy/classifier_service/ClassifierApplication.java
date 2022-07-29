@@ -12,7 +12,6 @@ public class ClassifierApplication {
     public static void main(String[] args) {
 
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-
         SpringApplication.run(ClassifierApplication.class, args);
     }
 }

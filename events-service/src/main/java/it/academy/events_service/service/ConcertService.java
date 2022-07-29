@@ -1,24 +1,21 @@
 package it.academy.events_service.service;
 
 import it.academy.events_service.dao.api.IConcertDao;
-
 import it.academy.events_service.dao.entity.ConcertEvent;
-
-import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dao.enums.EEventStatus;
-import it.academy.events_service.dao.enums.EEventType;
 import it.academy.events_service.dto.ConcertDtoCreate;
-
 import it.academy.events_service.dto.ConcertDtoUpdate;
-import it.academy.events_service.dto.FilmDtoCreate;
 import it.academy.events_service.dto.PageContent;
+import it.academy.events_service.dto.UserInformationDto;
+import it.academy.events_service.mappers.FromConcertDtoCreateToConcertEvent;
+import it.academy.events_service.mappers.FromConcertDtoUpdateToConcertEvent;
+import it.academy.events_service.mappers.PageContentMapper;
 import it.academy.events_service.service.api.IConcertService;
-import org.springframework.beans.factory.annotation.Autowired;
+import it.academy.events_service.service.api.IRestTemplateService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -26,89 +23,52 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Validated
 @Transactional(readOnly = true)
 public class ConcertService implements IConcertService {
-    private RestTemplate restTemplate = new RestTemplate();
-    @Autowired
+    private RestTemplate template = new RestTemplate();
     private final IConcertDao concertDao;
-
     private UserHolder holder;
+    private IRestTemplateService restTemplateService;
 
-    public ConcertService(IConcertDao concertDao, UserHolder holder) {
+    public ConcertService(IConcertDao concertDao, UserHolder holder, IRestTemplateService restTemplateService) {
         this.concertDao = concertDao;
         this.holder = holder;
-
+        this.restTemplateService = restTemplateService;
     }
 
     @Transactional
     @Override
-    public ConcertEvent create(@Valid ConcertDtoCreate concertDto) {
-        return this.concertDao.save(mapCreate(concertDto));
+    public void create(@Valid ConcertDtoCreate concertDto) {
+        FromConcertDtoCreateToConcertEvent convert = new FromConcertDtoCreateToConcertEvent(holder);
+        restTemplateService.checkCategoryUUID(concertDto.getCategory(), template);
+        this.concertDao.save(convert.convert(concertDto));
     }
 
     @Override
     public PageContent<ConcertDtoCreate> getAll(Integer pageNo, Integer pageSize) {
-
-        PageContent<ConcertDtoCreate> content = new PageContent<>();
-
-        if (Objects.isNull(holder.getUser())) {
-            PageRequest paging = PageRequest.of(pageNo, pageSize);
-            Page<ConcertEvent> page = this.concertDao.findAllByStatus(EEventStatus.PUBLISHED, paging);
-
-            Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
-            content = new PageContent<>(dtoPage.getNumber(),
-                    dtoPage.getSize(),
-                    dtoPage.getTotalPages(),
-                    (int) dtoPage.getTotalElements(),
-                    dtoPage.isFirst(),
-                    dtoPage.getNumberOfElements(),
-                    dtoPage.isLast(),
-                    dtoPage.getContent());
-
+        PageContentMapper<ConcertDtoCreate> mapper = new PageContentMapper<>();
+        PageContent<ConcertDtoCreate> content;
+        PageRequest paging = PageRequest.of(pageNo, pageSize);
+        Page<ConcertEvent> page = null;
+        UserInformationDto user = holder.getUser();
+        if (user != null) {
+            List<GrantedAuthority> authorities = new ArrayList<>(user.getAuthorities());
+            if (authorities.get(0).equals(new SimpleGrantedAuthority("ADMIN"))) {
+                page = this.concertDao.findAll(paging);
+            } else if (authorities.get(0).equals(new SimpleGrantedAuthority("USER"))) {
+                page = this.concertDao.findAllByStatusAndCreator(EEventStatus.PUBLISHED, user.getUsername(), paging);
+            }
         } else {
-
-            Collection<? extends GrantedAuthority> authorities = holder.getUser().getAuthorities();
-            List<GrantedAuthority> authorities1 = new ArrayList<>(authorities);
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(authorities1.get(0).toString().replace("\"", ""));
-
-            if (authority.equals(new SimpleGrantedAuthority("ADMIN"))) {
-
-                PageRequest paging = PageRequest.of(pageNo, pageSize);
-                Page<ConcertEvent> page = this.concertDao.findAll(paging);
-
-                Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
-                content = new PageContent<>(dtoPage.getNumber(),
-                        dtoPage.getSize(),
-                        dtoPage.getTotalPages(),
-                        (int) dtoPage.getTotalElements(),
-                        dtoPage.isFirst(),
-                        dtoPage.getNumberOfElements(),
-                        dtoPage.isLast(),
-                        dtoPage.getContent());
-
-            }
-
-            if (authority.equals(new SimpleGrantedAuthority("USER"))) {
-
-                PageRequest paging = PageRequest.of(pageNo, pageSize);
-                Page<ConcertEvent> page = this.concertDao.findAllByStatusAndCreator(EEventStatus.PUBLISHED, holder.getUser().getUsername(), paging);
-
-                Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
-                content = new PageContent<>(dtoPage.getNumber(),
-                        dtoPage.getSize(),
-                        dtoPage.getTotalPages(),
-                        (int) dtoPage.getTotalElements(),
-                        dtoPage.isFirst(),
-                        dtoPage.getNumberOfElements(),
-                        dtoPage.isLast(),
-                        dtoPage.getContent());
-
-            }
+            page = this.concertDao.findAllByStatus(EEventStatus.PUBLISHED, paging);
         }
+        Page<ConcertDtoCreate> dtoPage = page.map(ConcertDtoCreate::new);
+        content = mapper.map(dtoPage);
         return content;
     }
 
@@ -123,66 +83,21 @@ public class ConcertService implements IConcertService {
 
     @Transactional
     @Override
-    public ConcertEvent update(ConcertDtoUpdate concertDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate) {
-
+    public void update(ConcertDtoUpdate concertDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate) {
+        FromConcertDtoUpdateToConcertEvent mapper = new FromConcertDtoUpdateToConcertEvent();
         if (this.concertDao.findByUuid(uuid) == null) {
             throw new IllegalArgumentException("Введен неверный UUID!");
         }
-
         ConcertEvent concertEvent = this.concertDao.findByUuid(uuid);
-
-        if (!concertEvent.getDtUpdate().equals(lastKnowDtUpdate)) {
-            throw new IllegalArgumentException("Данные уже были кем-то изменены до вас!");
+        UserInformationDto user = holder.getUser();
+        if (user != null) {
+            List<GrantedAuthority> authorities = new ArrayList<>(user.getAuthorities());
+            if (!concertEvent.getDtUpdate().equals(lastKnowDtUpdate)) {
+                throw new IllegalArgumentException("Данные уже были кем-то изменены до вас!");
+            }
+            if (concertEvent.getCreator().equals(user.getUsername()) || authorities.get(0).equals(new SimpleGrantedAuthority("ADMIN"))) {
+                this.concertDao.save(mapper.convert(concertDtoUpdate, concertEvent));
+            } else throw new IllegalArgumentException("Вы не можете редактировать чужой фильм!");
         }
-
-        return this.concertDao.save(mapUpdate(concertEvent, concertDtoUpdate));
     }
-
-    public ConcertEvent mapCreate(ConcertDtoCreate concertDto) {
-        ConcertEvent concertEvent = new ConcertEvent();
-
-        concertEvent.setUuid(UUID.randomUUID());
-        concertEvent.setDtCreate(LocalDateTime.now());
-        concertEvent.setDtUpdate(concertEvent.getDtCreate());
-        concertEvent.setTitle(concertDto.getTitle());
-        concertEvent.setDescription(concertDto.getDescription());
-        concertEvent.setDtEvent(concertDto.getDtEvent());
-        concertEvent.setDtEndOfSale(concertDto.getDtEndOfSale());
-        concertEvent.setType(EEventType.CONCERTS);
-        concertEvent.setStatus(concertDto.getStatus());
-
-        if (concertDto.getCategory() != null) {
-            concertEvent.setCategory(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/concert/category/" + concertDto.getCategory(), UUID.class));
-        }
-
-        return concertEvent;
-    }
-
-    public ConcertEvent mapUpdate(ConcertEvent concertEvent, ConcertDtoUpdate concertDtoUpdate) {
-
-        if (concertDtoUpdate.getTitle() != null) {
-            concertEvent.setTitle(concertDtoUpdate.getTitle());
-        }
-
-        if (concertDtoUpdate.getDescription() != null) {
-            concertEvent.setTitle(concertDtoUpdate.getDescription());
-        }
-
-        if (concertDtoUpdate.getDtEvent() != null) {
-            concertEvent.setDtEvent(concertDtoUpdate.getDtEvent());
-        }
-        if (concertDtoUpdate.getDtEndOfSale() != null) {
-            concertEvent.setDtEndOfSale(concertDtoUpdate.getDtEndOfSale());
-        }
-        if (concertDtoUpdate.getStatus() != null) {
-            concertEvent.setStatus(concertDtoUpdate.getStatus());
-        }
-
-        if (concertDtoUpdate.getCategory() != null) {
-            concertEvent.setCategory(restTemplate.getForObject("http://localhost:8081/api/v1/classifier/concert/category/" + concertDtoUpdate.getCategory(), UUID.class));
-        }
-
-        return concertEvent;
-    }
-
 }

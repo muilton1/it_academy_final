@@ -10,7 +10,6 @@ public class PageContent<T> {
     private boolean first;
     private int numberOfElements;
     private boolean last;
-
     List<T> content;
 
     public PageContent() {

@@ -33,7 +33,6 @@ public class User implements UserDetails {
     private EUserRole role;
     @Enumerated(EnumType.STRING)
     private EUserStatus status;
-
     private String password;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;

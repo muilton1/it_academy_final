@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public interface IFilmService {
-    FilmEvent create(@Valid FilmDtoCreate filmDto);
+    void create(@Valid FilmDtoCreate filmDto);
 
     PageContent getAll(Integer pageNo, Integer pageSize);
 
-    FilmEvent update(FilmDtoUpdate filmDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate);
+    void update(FilmDtoUpdate filmDtoUpdate, UUID uuid, LocalDateTime lastKnowDtUpdate);
 
     FilmEvent getOne(UUID uuid);
 }

@@ -6,13 +6,10 @@ import it.academy.events_service.dto.FilmDtoCreate;
 import it.academy.events_service.dto.FilmDtoUpdate;
 import it.academy.events_service.dto.PageContent;
 import it.academy.events_service.service.api.IFilmService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -21,9 +18,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/afisha/event/films")
-@Validated
+
 public class FilmController {
-    @Autowired
     private final IFilmService filmService;
 
     public FilmController(IFilmService filmService) {
@@ -31,9 +27,9 @@ public class FilmController {
     }
 
     @PostMapping()
-    public ResponseEntity<FilmDtoCreate> create(@Valid @RequestBody FilmDtoCreate filmDto) {
-
-        return new ResponseEntity<>(new FilmDtoCreate(this.filmService.create(filmDto)), HttpStatus.CREATED);
+    @ResponseStatus(HttpStatus.CREATED)
+    public void create(@RequestBody FilmDtoCreate filmDto) {
+        this.filmService.create(filmDto);
     }
 
     @GetMapping()
@@ -48,9 +44,10 @@ public class FilmController {
     }
 
     @PutMapping("/{uuid}/dt_update/{dt_create}")
-    public ResponseEntity<FilmDtoUpdate> update(@Valid @RequestBody FilmDtoUpdate filmDtoUpdate, @PathVariable UUID uuid, @PathVariable Long dt_create) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public void update(@RequestBody FilmDtoUpdate filmDtoUpdate, @PathVariable UUID uuid, @PathVariable Long dt_create) {
         LocalDateTime lastKnowDtUpdate = LocalDateTime.ofInstant(Instant.ofEpochMilli(dt_create), ZoneId.systemDefault());
-        return new ResponseEntity<>(new FilmDtoUpdate(this.filmService.update(filmDtoUpdate, uuid, lastKnowDtUpdate)), HttpStatus.OK);
+        this.filmService.update(filmDtoUpdate, uuid, lastKnowDtUpdate);
     }
 
 }

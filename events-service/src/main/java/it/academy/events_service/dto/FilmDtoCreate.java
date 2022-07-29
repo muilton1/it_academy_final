@@ -9,13 +9,18 @@ import it.academy.events_service.dao.entity.FilmEvent;
 import it.academy.events_service.dao.enums.EEventStatus;
 import org.springframework.validation.annotation.Validated;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @Validated
 public class FilmDtoCreate {
-
     private String title;
     private String description;
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -24,13 +29,13 @@ public class FilmDtoCreate {
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
+    @Enumerated(EnumType.STRING)
     private EEventStatus status;
     private int releaseYear;
     @JsonFormat(pattern = "dd MMMM yyyy")
     private LocalDate releaseDate;
     private UUID country;
     private int duration;
-
     private String creator;
 
     public FilmDtoCreate() {
@@ -46,9 +51,10 @@ public class FilmDtoCreate {
         this.releaseDate = entity.getReleaseDate();
         this.country = entity.getCountry();
         this.duration = entity.getDuration();
-        this.creator=entity.getCreator();
+        this.creator = entity.getCreator();
     }
-    @NotNull(message = "Заполните название фильма!")
+
+    @NotBlank(message = "Заполните название фильма!")
     public String getTitle() {
         return title;
     }
@@ -56,7 +62,8 @@ public class FilmDtoCreate {
     public void setTitle(String title) {
         this.title = title;
     }
-    @NotNull(message = "Заполните описание фильма!")
+
+    @NotBlank(message = "Заполните описание фильма!")
     public String getDescription() {
         return description;
     }
@@ -64,6 +71,7 @@ public class FilmDtoCreate {
     public void setDescription(String description) {
         this.description = description;
     }
+
     @NotNull(message = "Заполните дату фильма!")
     public LocalDateTime getDtEvent() {
         return dtEvent;
@@ -72,6 +80,7 @@ public class FilmDtoCreate {
     public void setDtEvent(LocalDateTime dtEvent) {
         this.dtEvent = dtEvent;
     }
+
     @NotNull(message = "Заполните конец продажи билетов на фильм!")
     public LocalDateTime getDtEndOfSale() {
         return dtEndOfSale;
@@ -80,6 +89,7 @@ public class FilmDtoCreate {
     public void setDtEndOfSale(LocalDateTime dtEndOfSale) {
         this.dtEndOfSale = dtEndOfSale;
     }
+
     @NotNull(message = "Заполните статус фильма!")
     public EEventStatus getStatus() {
         return status;
@@ -88,7 +98,8 @@ public class FilmDtoCreate {
     public void setStatus(EEventStatus status) {
         this.status = status;
     }
-    @NotNull(message = "Заполните год выпуска фильма!")
+
+    @NotNull(message = "Заполните дату выпуска фильма!")
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
@@ -96,6 +107,7 @@ public class FilmDtoCreate {
     public void setReleaseDate(LocalDate releaseDate) {
         this.releaseDate = releaseDate;
     }
+
     @NotNull(message = "Заполните страну фильма!")
     public UUID getCountry() {
         return country;
@@ -104,7 +116,9 @@ public class FilmDtoCreate {
     public void setCountry(UUID country) {
         this.country = country;
     }
-    @NotNull(message = "Заполните год релиза фильма!")
+
+    @Min(value = 1895, message = "Год выпуска должен быть не меньше 1895!")
+    @Max(value = 2024, message = "Год выпуска должен быть не больше 2024!")
     public int getReleaseYear() {
         return releaseYear;
     }
@@ -112,7 +126,8 @@ public class FilmDtoCreate {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
-    @NotNull(message = "Заполните длительность фильма!")
+
+    @Min(value = 1, message = "Длительность фильма должна быть больше 1 минуты!")
     public int getDuration() {
         return duration;
     }
