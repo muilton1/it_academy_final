@@ -2,14 +2,18 @@ C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_serv
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dao\entity\Role.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\config\JpaUsersStorageConfig.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\advices\ErrorMessage.java
-C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\dto\RegistrationDto.java
-C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\dto\InformationDto.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\filter\JwtFilter.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dto\RegistrationDto.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\mappers\PageContentMapper.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\mappers\FromUserDtoUpdateToUser.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dao\enums\EUserRole.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\mappers\FromUserDtoToUser.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dao\api\IUserDao.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\service\UserHolder.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\advices\ErrorResponse.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dto\InformationDto.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\service\api\IUserService.java
+C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\dto\LoginDto.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\service\UserService.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\config\ControllerConfig.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\AdminController.java
@@ -24,4 +28,3 @@ C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_serv
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\advices\GlobalHandler.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\PublicController.java
 C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\UserApplication.java
-C:\Users\User\IdeaProjects\final\user-service\src\main\java\it\academy\user_service\controller\dto\LoginDto.java

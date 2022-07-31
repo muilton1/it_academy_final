@@ -7,10 +7,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class JwtTokenUtil {
-
     private static final String jwtSecret = "NDQ1ZjAzNjQtMzViZi00MDRjLTljZjQtNjNjYWIyZTU5ZDYw";
     private static final String jwtIssuer = "ITAcademy";
-
 
     public static String generateAccessToken(UserDetails user) {
         return generateAccessToken(user.getUsername());
@@ -49,15 +47,14 @@ public class JwtTokenUtil {
             Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (SignatureException ex) {
-            //logger.error("Invalid JWT signature - {}", ex.getMessage());
+            throw new SignatureException("Invalid JWT signature");
         } catch (MalformedJwtException ex) {
-            //logger.error("Invalid JWT token - {}", ex.getMessage());
+            throw new MalformedJwtException("Invalid JWT token");
         } catch (ExpiredJwtException ex) {
-            //logger.error("Expired JWT token - {}", ex.getMessage());
         } catch (UnsupportedJwtException ex) {
-            //logger.error("Unsupported JWT token - {}", ex.getMessage());
+            throw new UnsupportedJwtException("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            //logger.error("JWT claims string is empty - {}", ex.getMessage());
+            throw new IllegalArgumentException("JWT claims string is empty");
         }
         return false;
     }

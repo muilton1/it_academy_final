@@ -22,7 +22,7 @@ import static org.apache.logging.log4j.util.Strings.isEmpty;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    @Autowired
+
     private final UserService userService;
 
     public JwtFilter(UserService userService) {

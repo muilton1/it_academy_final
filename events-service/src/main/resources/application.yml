@@ -2,7 +2,7 @@ spring:
   datasource:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:5432/eventservice?currentSchema=event
+    url: jdbc:postgresql://db:5432/eventservice?currentSchema=event
     driver-class-name: org.postgresql.Driver
   jpa:
     database: POSTGRESQL
@@ -10,4 +10,4 @@ spring:
     hibernate:
       ddl-auto:update
 server:
-  port: 8080
+  port: 80

@@ -14,6 +14,4 @@ public interface IUserDao extends JpaRepository<User, UUID> {
     User findByMail(String mail);
 
     User findByNick(String nick);
-
-    User findByRole(EUserRole role);
 }

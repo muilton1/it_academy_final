@@ -21,12 +21,15 @@ import java.util.UUID;
 public class FilmDtoUpdate {
     private String title;
     private String description;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEvent;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
+
     private EEventStatus status;
     private int releaseYear;
     @JsonFormat(pattern = "dd MMMM yyyy")

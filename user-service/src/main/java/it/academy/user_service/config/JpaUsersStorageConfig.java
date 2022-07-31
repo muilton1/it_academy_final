@@ -1,21 +1,9 @@
 package it.academy.user_service.config;
 
-import it.academy.user_service.dao.api.IRoleDao;
-import it.academy.user_service.dao.api.IUserDao;
-import it.academy.user_service.dao.entity.User;
-import it.academy.user_service.dao.enums.EUserRole;
-import it.academy.user_service.dao.enums.EUserStatus;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.annotation.PostConstruct;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.UUID;
 
 @Configuration
 public class JpaUsersStorageConfig {
@@ -24,7 +12,7 @@ public class JpaUsersStorageConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Autowired
+    /*@Autowired
     private IRoleDao roleDao;
     @Autowired
     private IUserDao userDao;
@@ -49,5 +37,6 @@ public class JpaUsersStorageConfig {
 
             userDao.save(admin);
         }
-    }
+   */
 }
+

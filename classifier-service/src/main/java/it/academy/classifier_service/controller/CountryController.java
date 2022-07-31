@@ -6,15 +6,13 @@ import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.ICountryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/classifier/country")
+@RequestMapping("/classifier/country")
 
 public class CountryController {
     private final ICountryService countryService;

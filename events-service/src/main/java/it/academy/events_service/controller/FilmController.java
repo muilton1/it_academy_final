@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/afisha/event/films")
+@RequestMapping("/afisha/event/films")
 
 public class FilmController {
     private final IFilmService filmService;

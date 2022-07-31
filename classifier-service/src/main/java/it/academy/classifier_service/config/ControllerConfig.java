@@ -17,27 +17,21 @@ public class ControllerConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-
         mapper.registerModule(new JavaTimeModule());
-
         return mapper;
     }
 
     @Bean
     public MappingJackson2HttpMessageConverter jsonHttpMessageConverter(ObjectMapper mapper) {
         MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter();
-
         messageConverter.setObjectMapper(mapper);
-
         return messageConverter;
     }
 
     @Bean
     public RequestMappingHandlerAdapter requestHandlerAdapter(List<MappingJackson2HttpMessageConverter> converterList) {
         RequestMappingHandlerAdapter adapter = new RequestMappingHandlerAdapter();
-
         adapter.setMessageConverters(Collections.unmodifiableList(converterList));
-
         return adapter;
     }
 }

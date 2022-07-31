@@ -22,11 +22,9 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class CountryService implements ICountryService {
     private final ICountryDao countryDao;
-    private UserHolder holder;
 
-    public CountryService(ICountryDao countryDao, UserHolder holder) {
+    public CountryService(ICountryDao countryDao) {
         this.countryDao = countryDao;
-        this.holder = holder;
     }
 
     @Transactional

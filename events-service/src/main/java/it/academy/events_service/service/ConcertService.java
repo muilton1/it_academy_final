@@ -74,10 +74,8 @@ public class ConcertService implements IConcertService {
 
     @Override
     public ConcertEvent getOne(UUID uuid) {
-
         if (this.concertDao.findByUuid(uuid) != null) {
             return this.concertDao.findByUuid(uuid);
-
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 

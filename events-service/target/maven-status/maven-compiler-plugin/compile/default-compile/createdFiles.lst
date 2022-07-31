@@ -1,10 +1,13 @@
-it\academy\events_service\controller\filter\JwtFilter$1.class
 it\academy\events_service\dto\PageContent.class
+it\academy\events_service\mappers\FromFilmDtoUpdateToFilmEvent.class
+it\academy\events_service\service\RestTemplateService.class
 it\academy\events_service\service\UserHolder.class
 it\academy\events_service\controller\utils\JwtTokenUtil.class
+it\academy\events_service\mappers\FromFilmDtoCreateToFilmEvent.class
+it\academy\events_service\mappers\PageContentMapper.class
 it\academy\events_service\controller\advices\GlobalHandler.class
-it\academy\events_service\dto\InformationDto.class
 it\academy\events_service\dto\FilmDtoUpdate.class
+it\academy\events_service\mappers\FromConcertDtoCreateToConcertEvent.class
 it\academy\events_service\dao\api\IConcertDao.class
 it\academy\events_service\controller\utils\json\LocalDateTimeSerializer.class
 it\academy\events_service\controller\filter\JwtFilter.class
@@ -18,8 +21,10 @@ it\academy\events_service\service\api\IFilmService.class
 it\academy\events_service\config\SecurityConfig.class
 it\academy\events_service\dto\FilmDtoCreate.class
 it\academy\events_service\dto\ConcertDtoUpdate.class
+it\academy\events_service\dto\UserInformationDto.class
 it\academy\events_service\controller\ConcertController.class
 it\academy\events_service\controller\FilmController.class
+it\academy\events_service\service\api\IRestTemplateService.class
 it\academy\events_service\EventsApplication.class
 it\academy\events_service\dao\enums\EEventType.class
 it\academy\events_service\config\ControllerConfig.class
@@ -27,5 +32,5 @@ it\academy\events_service\service\api\IConcertService.class
 it\academy\events_service\controller\utils\json\LocalDateTimeDeserializer.class
 it\academy\events_service\service\ConcertService.class
 it\academy\events_service\controller\advices\ErrorMessage.class
+it\academy\events_service\mappers\FromConcertDtoUpdateToConcertEvent.class
 it\academy\events_service\dao\entity\FilmEvent.class
-it\academy\events_service\dao\enums\ERole.class

@@ -46,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         RestTemplate template = new RestTemplate();
-        String url = "http://localhost:8082/api/v1/users/role";
+        String url = "http://user-service:82/users/role";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + token);

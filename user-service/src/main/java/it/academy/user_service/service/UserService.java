@@ -9,7 +9,6 @@ import it.academy.user_service.mappers.FromUserDtoToUser;
 import it.academy.user_service.mappers.FromUserDtoUpdateToUser;
 import it.academy.user_service.mappers.PageContentMapper;
 import it.academy.user_service.service.api.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;

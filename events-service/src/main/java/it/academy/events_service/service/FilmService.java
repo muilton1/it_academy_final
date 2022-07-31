@@ -77,7 +77,6 @@ public class FilmService implements IFilmService {
     public FilmEvent getOne(UUID uuid) {
         if (this.filmDao.findByUuid(uuid) != null) {
             return this.filmDao.findByUuid(uuid);
-
         } else throw new IllegalArgumentException("Введен неверный UUID!");
     }
 

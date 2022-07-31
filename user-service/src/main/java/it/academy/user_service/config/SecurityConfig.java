@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtFilter filter;
-
     public SecurityConfig(JwtFilter filter) {
         this.filter = filter;
     }
@@ -44,10 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests()
                 // Our public endpoints
-                .antMatchers("/api/v1/users/role").permitAll()
-                .antMatchers("/api/v1/users/me").authenticated()
-                .antMatchers("/api/v1/users/registration").anonymous()
-                .antMatchers("/api/v1/users/login").anonymous()
+                .antMatchers("/users/registration").permitAll()
+                .antMatchers("/users/role").permitAll()
+                .antMatchers("/users/me").authenticated()
+                .antMatchers("/users/login").anonymous()
 
                 // Our private endpoints
                 .anyRequest().hasRole("ADMIN");

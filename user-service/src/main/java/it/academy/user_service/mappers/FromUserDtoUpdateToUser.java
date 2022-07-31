@@ -9,15 +9,19 @@ public class FromUserDtoUpdateToUser {
         if (userDto.getMail() != null) {
             user.setMail(userDto.getMail());
         }
+
         if (userDto.getNick() != null) {
             user.setNick(userDto.getNick());
         }
+
         if (userDto.getStatus() != null) {
             user.setStatus(userDto.getStatus());
         }
+
         if (userDto.getRole() != null) {
             user.setRole(userDto.getRole());
         }
+
         if (userDto.getPassword() != null) {
             user.setPassword(encoder.encode(user.getPassword()));
         }

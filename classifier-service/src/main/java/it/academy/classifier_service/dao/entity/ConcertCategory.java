@@ -16,12 +16,15 @@ import java.util.UUID;
 public class ConcertCategory {
     @Id
     private UUID uuid;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtCreate;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtUpdate;
+
     private String title;
 
     public ConcertCategory() {

@@ -18,21 +18,27 @@ import java.util.UUID;
 public class FilmEvent {
     @Id
     private UUID uuid;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtCreate;
+
     @Version
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtUpdate;
+
     private String title;
     private String description;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEvent;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
+
     @Enumerated(EnumType.STRING)
     private EEventType type;
     @Enumerated(EnumType.STRING)

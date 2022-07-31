@@ -23,12 +23,15 @@ import java.util.UUID;
 public class FilmDtoCreate {
     private String title;
     private String description;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEvent;
+
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime dtEndOfSale;
+
     @Enumerated(EnumType.STRING)
     private EEventStatus status;
     private int releaseYear;

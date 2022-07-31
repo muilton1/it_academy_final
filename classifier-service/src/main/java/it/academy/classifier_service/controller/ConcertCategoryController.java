@@ -5,15 +5,13 @@ import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.service.api.IConcertCategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/classifier/concert/category")
+@RequestMapping("/classifier/concert/category")
 
 public class ConcertCategoryController {
     private final IConcertCategoryService categoryService;

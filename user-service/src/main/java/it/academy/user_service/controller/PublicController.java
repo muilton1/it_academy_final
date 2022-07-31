@@ -1,9 +1,9 @@
 package it.academy.user_service.controller;
 
-import it.academy.user_service.controller.dto.InformationDto;
-import it.academy.user_service.controller.dto.LoginDto;
 import it.academy.user_service.controller.utils.JwtTokenUtil;
 import it.academy.user_service.dao.entity.User;
+import it.academy.user_service.dto.InformationDto;
+import it.academy.user_service.dto.LoginDto;
 import it.academy.user_service.dto.UserDto;
 import it.academy.user_service.service.UserHolder;
 import it.academy.user_service.service.UserService;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 
 public class PublicController {
     private final UserService userService;

@@ -16,7 +16,7 @@ import java.time.ZoneId;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/afisha/event/concerts")
+@RequestMapping("/afisha/event/concerts")
 
 public class ConcertController {
     private final IConcertService concertService;

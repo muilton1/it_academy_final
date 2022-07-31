@@ -6,7 +6,9 @@
 
     <groupId>it.academy</groupId>
     <artifactId>events-service</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
+    <name>events-service</name>
+    <description>events-service</description>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -37,13 +39,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
-
-        <!--    <dependency>-->
-        <!--      <groupId>it.academy</groupId>-->
-        <!--      <artifactId>classifier-service</artifactId>-->
-        <!--      <version>1.0-SNAPSHOT</version>-->
-        <!--      <scope>compile</scope>-->
-        <!--    </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

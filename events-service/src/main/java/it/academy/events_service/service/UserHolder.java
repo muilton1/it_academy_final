@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserHolder {
     public UserInformationDto getUser() {
-
         Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (user == "anonymousUser") {
             return null;

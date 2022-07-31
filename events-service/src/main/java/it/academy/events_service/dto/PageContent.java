@@ -6,7 +6,7 @@ public class PageContent<T> {
     private int number;
     private int size;
     private int totalPages;
-    private int totalElements;
+    private long totalElements;
     private boolean first;
     private int numberOfElements;
     private boolean last;
@@ -15,7 +15,7 @@ public class PageContent<T> {
     public PageContent() {
     }
 
-    public PageContent(int number, int size, int totalPages, int totalElements, boolean first, int numberOfElements, boolean last, List<T> content) {
+    public PageContent(int number, int size, int totalPages, long totalElements, boolean first, int numberOfElements, boolean last, List<T> content) {
         this.number = number;
         this.size = size;
         this.totalPages = totalPages;
@@ -50,7 +50,7 @@ public class PageContent<T> {
         this.totalPages = totalPages;
     }
 
-    public int getTotalElements() {
+    public long getTotalElements() {
         return totalElements;
     }
 

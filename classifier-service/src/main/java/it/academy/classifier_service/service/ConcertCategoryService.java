@@ -7,7 +7,6 @@ import it.academy.classifier_service.dto.PageContent;
 import it.academy.classifier_service.mappers.FromConcertCategoryDtoToConcertCategory;
 import it.academy.classifier_service.mappers.PageContentMapper;
 import it.academy.classifier_service.service.api.IConcertCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -22,11 +21,9 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ConcertCategoryService implements IConcertCategoryService {
     private final IConcertCategoryDao categoryDao;
-    private UserHolder holder;
 
-    public ConcertCategoryService(IConcertCategoryDao categoryDao, UserHolder holder) {
+    public ConcertCategoryService(IConcertCategoryDao categoryDao) {
         this.categoryDao = categoryDao;
-        this.holder = holder;
     }
 
     @Transactional
